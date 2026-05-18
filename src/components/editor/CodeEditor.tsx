@@ -19,6 +19,7 @@ import {
   Minimize2
 } from 'lucide-react';
 import { useTheme } from '@/lib/theme';
+import { usePyodide } from '@/hooks/usePyodide';
 
 interface TestCase {
   input: string;
@@ -62,6 +63,8 @@ export default function CodeEditor({
   const editorRef = useRef<Parameters<NonNullable<Parameters<typeof Editor>[0]['onMount']>>[0] | null>(null);
   const monacoRef = useRef<Monaco | null>(null);
 
+  const { isReady: pyodideReady, isLoading: pyodideLoading, runCode: pyodideRunCode, runWithTestCases } = usePyodide();
+
   // Sync external value changes
   useEffect(() => {
     if (externalValue !== undefined) {
@@ -82,102 +85,31 @@ export default function CodeEditor({
     monacoRef.current = monaco;
   };
 
-  const simulateExecution = useCallback((userCode: string) => {
+  const handleRun = useCallback(async () => {
     setIsRunning(true);
     setHasError(false);
     setOutput([]);
     setTestResults(null);
     setShowOutput(true);
 
-    const startTime = Date.now();
-    const lines: string[] = [];
+    try {
+      const result = await pyodideRunCode(code);
+      setExecutionTime(result.executionTime);
 
-    // Simple simulation based on code content
-    setTimeout(() => {
-      const elapsed = Date.now() - startTime;
-      setExecutionTime(elapsed);
-
-      // Check for print statements
-      const printMatches = userCode.match(/print\s*\((?:["']([^"']*)["']|\()([^)]*)\)?\)/g);
-      const hasInput = userCode.includes('input(');
-      const hasForLoop = userCode.includes('for ');
-      const hasIfCondition = userCode.includes('if ');
-
-      if (printMatches && printMatches.length > 0) {
-        printMatches.forEach(match => {
-          const contentMatch = match.match(/print\s*\(\s*["']([^"']*)["']/);
-          if (contentMatch) {
-            lines.push(contentMatch[1]);
-          } else {
-            lines.push('None');
-          }
-        });
-      }
-
-      // Simulate some common patterns
-      if (userCode.includes('print(f"') || userCode.includes("print(f'")) {
-        const fStringMatch = userCode.match(/print\s*\(f?["'](.+?)["']/);
-        if (fStringMatch) {
-          const str = fStringMatch[1];
-          let result = str.replace(/\{([^}]+)\}/g, 'value');
-          lines.push(result);
-        }
-      }
-
-      if (userCode.includes('print(') && printMatches?.length === 0) {
-        lines.push('None');
-      }
-
-      if (hasForLoop && !printMatches) {
-        lines.push('Running loop...');
-        lines.push('Loop completed.');
-      }
-
-      if (!printMatches && !hasForLoop && !lines.length) {
-        if (hasInput) {
-          lines.push('Waiting for input...');
-        } else {
-          lines.push('Code executed successfully.');
-          lines.push('No output displayed.');
-        }
-      }
-
-      // Check for syntax errors
-      if (userCode.includes('===') || userCode.includes('!==')) {
+      if (result.error) {
         setHasError(true);
-        lines.unshift('SyntaxError: invalid syntax');
-        lines.unshift('  File "<stdin>", line 1');
-        setOutput(lines);
-        setIsRunning(false);
-        return;
+        setOutput(result.error.split('\n'));
+      } else {
+        const outputLines = result.output ? result.output.split('\n') : ['(Không có output)'];
+        setOutput(outputLines);
       }
-
-      // Run test cases if available
-      if (testCases.length > 0 && userCode.trim() !== (starterCode ?? '').trim()) {
-        const results = testCases.map(tc => {
-          // Simple mock - in real app, this would run actual code
-          const passed = Math.random() > 0.3; // Simulate random pass/fail
-          return {
-            input: tc.input,
-            expected: tc.expected_output,
-            actual: passed ? tc.expected_output : 'Actual output may vary',
-            passed
-          };
-        });
-
-        const passed = results.filter(r => r.passed).length;
-        const failed = results.filter(r => !r.passed).length;
-        setTestResults({ passed, failed, results });
-      }
-
-      setOutput(lines);
+    } catch (err) {
+      setHasError(true);
+      setOutput([err instanceof Error ? err.message : 'Lỗi không xác định']);
+    } finally {
       setIsRunning(false);
-    }, 800 + Math.random() * 700);
-  }, [testCases, starterCode]);
-
-  const handleRun = () => {
-    simulateExecution(code);
-  };
+    }
+  }, [code, pyodideRunCode]);
 
   const handleReset = () => {
     setCode(starterCode ?? '');
@@ -193,12 +125,48 @@ export default function CodeEditor({
     }
   };
 
-  const handleSubmit = () => {
-    simulateExecution(code);
-    if (onSubmit) {
-      onSubmit(code);
+  const handleSubmit = useCallback(async () => {
+    if (testCases.length === 0) {
+      handleRun();
+      if (onSubmit) onSubmit(code);
+      return;
     }
-  };
+
+    setIsRunning(true);
+    setHasError(false);
+    setOutput([]);
+    setTestResults(null);
+    setShowOutput(true);
+
+    try {
+      const { results, passedCount, totalCount } = await runWithTestCases(code, testCases);
+      
+      const mapped = results.map(r => ({
+        input: r.input,
+        expected: r.expected,
+        actual: r.actual,
+        passed: r.passed
+      }));
+
+      setTestResults({
+        passed: passedCount,
+        failed: totalCount - passedCount,
+        results: mapped
+      });
+
+      if (passedCount === totalCount) {
+        setOutput([`✅ Tất cả ${totalCount} test cases đều PASS!`]);
+      } else {
+        setOutput([`⚠️ ${passedCount}/${totalCount} test cases PASS`]);
+      }
+    } catch (err) {
+      setHasError(true);
+      setOutput([err instanceof Error ? err.message : 'Lỗi không xác định']);
+    } finally {
+      setIsRunning(false);
+      if (onSubmit) onSubmit(code);
+    }
+  }, [code, testCases, onSubmit, handleRun, runWithTestCases]);
 
   const beforeMount = (monaco: Monaco) => {
     monaco.editor.defineTheme('python-dark', {
@@ -253,7 +221,11 @@ export default function CodeEditor({
             <div className="w-3 h-3 rounded-full bg-yellow-500" />
             <div className="w-3 h-3 rounded-full bg-green-500" />
           </div>
-          <span className="ml-2 text-sm font-medium text-muted">Python Editor</span>
+          <span className="ml-2 text-sm font-medium text-muted">
+            Python Editor
+            {pyodideLoading && <span className="ml-2 text-xs text-warning animate-pulse">⏳ Loading Python...</span>}
+            {pyodideReady && <span className="ml-2 text-xs text-success">● Python Ready</span>}
+          </span>
         </div>
 
         <div className="flex items-center gap-2">

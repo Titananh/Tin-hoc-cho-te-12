@@ -17,38 +17,43 @@ import {
 const features = [
   {
     icon: Route,
-    title: "Học theo lộ trình",
-    description: "Từ cơ bản đến nâng cao, bài bản theo chương trình lớp 12",
+    title: "Đúng SGK Cánh Diều",
+    description: "Nội dung 100% theo SGK Tin học 12 KHMT — Cánh Diều, GDPT 2018",
+  },
+  {
+    icon: Code2,
+    title: "Chạy Python thật",
+    description: "Code editor với Pyodide — thực thi Python ngay trên trình duyệt",
   },
   {
     icon: BookOpen,
-    title: "Làm bài tập trực tiếp",
-    description: "Hàng trăm bài tập thực hành ngay trên nền tảng",
+    title: "88+ bài tập thực hành",
+    description: "Bài tập từ dễ đến khó: List, Sort, Search, Dict, Set, OOP",
   },
   {
     icon: Brain,
-    title: "AI Tutor kèm riêng",
-    description: "Trợ lý AI giải đáp 24/7, giải thích chi tiết từng bước",
+    title: "3 đề thi thử THPT",
+    description: "100 câu trắc nghiệm có bấm giờ, chấm điểm tự động",
   },
   {
     icon: BarChart3,
     title: "Theo dõi tiến độ",
-    description: "Biểu đồ trực quan, đánh giá chính xác năng lực",
+    description: "Lưu tiến độ học tập, XP, badges, streak ngay trên trình duyệt",
   },
   {
     icon: Award,
-    title: "Nhận huy hiệu và XP",
-    description: "Hệ thống thành tích, vinh danh thành tích học tập",
+    title: "Gamification",
+    description: "Hệ thống XP, huy hiệu, flashcards, bảng xếp hạng",
   },
 ];
 
 const codeLines = [
-  { text: 'print(', color: "text-accent" },
-  { text: '"Xin chào học sinh lớp 12!"', color: "text-secondary" },
-  { text: ')', color: "text-accent" },
-  { text: "\n# Chương trình Python đầu tiên", color: "text-muted" },
-  { text: "\nfor i in range(5):", color: "text-primary" },
-  { text: '\n    print(f"Lần chạy #{i+1}")', color: "text-accent" },
+  { text: '# Thuật toán Selection Sort', color: "text-muted" },
+  { text: '\ndef selection_sort(ds):', color: "text-primary" },
+  { text: '\n    for i in range(len(ds)-1):', color: "text-accent" },
+  { text: '\n        min_idx = i', color: "text-foreground" },
+  { text: '\n        for j in range(i+1, len(ds)):', color: "text-accent" },
+  { text: '\n            if ds[j] < ds[min_idx]:', color: "text-secondary" },
 ];
 
 const containerVariants = {
@@ -116,17 +121,16 @@ export default function Home() {
             <motion.div variants={itemVariants} className="space-y-4">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass">
                 <Zap className="w-4 h-4 text-accent" />
-                <span className="text-sm font-medium">Mới: AI Tutor thông minh</span>
+                <span className="text-sm font-medium">SGK Cánh Diều — KHMT 2024</span>
               </div>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
-                <span className="gradient-text">Học Python</span> từ cơ bản đến nâng cao
+                <span className="gradient-text">Luyện thi</span> Tin học 12
                 <br />
-                dành riêng cho{" "}
-                <span className="gradient-text">học sinh lớp 12</span>
+                <span className="gradient-text">Cánh Diều</span> — Khoa học Máy tính
               </h1>
               <p className="text-lg md:text-xl text-muted max-w-xl">
-                Nền tảng học lập trình Python hiện đại với lộ trình bài bản,
-                bài tập thực hành và trợ lý AI hỗ trợ 24/7
+                Nền tảng học & luyện thi Tin học 12 theo đúng SGK Cánh Diều.
+                Chạy Python thật, 88+ bài tập, 3 đề thi thử, chấm điểm tự động.
               </p>
             </motion.div>
 
@@ -174,7 +178,7 @@ export default function Home() {
                   <div className="w-3 h-3 rounded-full bg-success" />
                 </div>
                 <div className="flex-1 text-center text-sm text-muted font-mono">
-                  python-master-12.py
+                  selection_sort.py
                 </div>
               </div>
 
@@ -211,28 +215,29 @@ export default function Home() {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 2.2, duration: 0.3 }}
                     >
-                      Xin chào học sinh lớp 12!
+                      Trước: [64, 25, 12, 22, 11]
                     </motion.div>
                     <motion.div
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 2.4, duration: 0.3 }}
                     >
-                      Lần chạy #1
+                      Sau:   [11, 12, 22, 25, 64]
                     </motion.div>
                     <motion.div
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 2.6, duration: 0.3 }}
                     >
-                      Lần chạy #2
+                      ✅ Sorted!
                     </motion.div>
                     <motion.div
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 2.8, duration: 0.3 }}
+                      className="text-success"
                     >
-                      Lần chạy #3
+                      Thời gian: 0.3ms
                     </motion.div>
                     <motion.div
                       initial={{ opacity: 0, y: 10 }}
@@ -240,7 +245,7 @@ export default function Home() {
                       transition={{ delay: 3.0, duration: 0.3 }}
                       className="text-primary"
                     >
-                      ...
+                      
                     </motion.div>
                   </div>
                 </motion.div>
@@ -265,11 +270,11 @@ export default function Home() {
           >
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
               Tại sao chọn{" "}
-              <span className="gradient-text">Python Master 12</span>?
+              <span className="gradient-text">Tin học cho Tẻ 12</span>?
             </h2>
             <p className="text-lg text-muted max-w-2xl mx-auto">
-              Nền tảng được thiết kế riêng cho chương trình Tin học lớp 12,
-              giúp bạn nắm vững kiến thức và kỹ năng lập trình Python
+              Nền tảng được thiết kế riêng cho chương trình Tin học 12 Cánh Diều (KHMT),
+              giúp bạn nắm vững kiến thức và đạt điểm cao
             </p>
           </motion.div>
 
@@ -308,10 +313,10 @@ export default function Home() {
             className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center"
           >
             {[
-              { value: "10K+", label: "Học sinh" },
-              { value: "500+", label: "Bài tập" },
-              { value: "50+", label: "Bài học" },
-              { value: "24/7", label: "AI hỗ trợ" },
+              { value: "15+", label: "Bài học SGK" },
+              { value: "88+", label: "Bài tập" },
+              { value: "100", label: "Câu thi thử" },
+              { value: "∞", label: "Chạy code thật" },
             ].map((stat, index) => (
               <motion.div
                 key={index}

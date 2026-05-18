@@ -11,3 +11,6 @@ export { useTheme } from '@/lib/theme';
 
 // Re-export useToast from components/common/UI
 export { useToast } from '@/components/common/UI';
+
+// Pyodide Python runner
+export { usePyodide } from './usePyodide';
