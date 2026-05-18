@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="pythonGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3A7BD5"/>
+      <stop offset="100%" style="stop-color:#3066D2"/>
+    </linearGradient>
+  </defs>
+  <!-- Blue circle background -->
+  <circle cx="50" cy="50" r="45" fill="url(#pythonGradient)"/>
+  <!-- "Py" text -->
+  <text x="50" y="62" font-size="38" font-family="Arial, Helvetica, sans-serif" font-weight="bold" fill="white" text-anchor="middle">Py</text>
+  <!-- Python snake suggestion - subtle curve at bottom -->
+  <path d="M 20 70 Q 25 80 35 78 Q 45 76 50 78" stroke="white" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.6"/>
+</svg>
