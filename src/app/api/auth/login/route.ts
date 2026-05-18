@@ -1,91 +1,75 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
+import { User } from '@/types';
 
-interface LoginRequest {
-  email: string;
-  password: string;
-}
-
-// Mock user database
-const mockUsers = [
+// Mock users database — sẽ thay bằng DB thật ở Pha 5
+const mockUsers: { email: string; password: string; user: User }[] = [
   {
-    id: 'user-1',
-    name: 'Minh Nguyễn',
     email: 'minh@example.com',
     password: 'password123',
-    avatar_url: '',
-    role: 'student' as const,
-    xp: 1250,
-    level: 5,
-    streak_count: 7,
-    created_at: '2024-01-15',
-    last_active: new Date().toISOString()
-  }
+    user: {
+      id: 'user-1',
+      name: 'Minh Nguyễn',
+      email: 'minh@example.com',
+      avatar_url: '',
+      role: 'student',
+      xp: 1250,
+      level: 5,
+      streak_count: 7,
+      created_at: '2024-01-15',
+      last_active: new Date().toISOString(),
+    },
+  },
+  {
+    email: 'admin@example.com',
+    password: 'admin123',
+    user: {
+      id: 'user-admin',
+      name: 'Giáo viên',
+      email: 'admin@example.com',
+      avatar_url: '',
+      role: 'admin',
+      xp: 5000,
+      level: 10,
+      streak_count: 30,
+      created_at: '2023-09-01',
+      last_active: new Date().toISOString(),
+    },
+  },
 ];
 
-function generateToken(): string {
-  return `token_${Date.now()}_${Math.random().toString(36).substring(2, 15)}`;
-}
+// Danh sách user đã đăng ký trong session (in-memory)
+const registeredUsers: typeof mockUsers = [];
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
-    const body: LoginRequest = await request.json();
-    const { email, password } = body;
+    const { email, password } = await request.json();
 
-    // Validate required fields
     if (!email || !password) {
       return NextResponse.json(
-        { error: 'Missing required fields: email, password' },
+        { error: 'Email và mật khẩu không được để trống.' },
         { status: 400 }
       );
     }
 
-    // Find user by email
-    const user = mockUsers.find(u => u.email.toLowerCase() === email.toLowerCase());
+    // Tìm trong mock users + registered users
+    const allUsers = [...mockUsers, ...registeredUsers];
+    const found = allUsers.find(u => u.email === email && u.password === password);
 
-    if (!user) {
+    if (!found) {
       return NextResponse.json(
-        { error: 'Invalid credentials' },
+        { error: 'Email hoặc mật khẩu không đúng.' },
         { status: 401 }
       );
     }
 
-    // Verify password (mock validation)
-    if (user.password !== password) {
-      return NextResponse.json(
-        { error: 'Invalid credentials' },
-        { status: 401 }
-      );
-    }
+    // Cập nhật last_active
+    found.user.last_active = new Date().toISOString();
 
-    // Generate token and return user (without password)
-    const token = generateToken();
-    const { password: _, ...userWithoutPassword } = user;
-
-    return NextResponse.json(
-      { user: userWithoutPassword, token },
-      {
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Content-Type': 'application/json'
-        }
-      }
-    );
-  } catch (error) {
-    console.error('Login error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ user: found.user, token: `mock-token-${found.user.id}` });
+  } catch {
+    return NextResponse.json({ error: 'Lỗi server.' }, { status: 500 });
   }
 }
 
-export async function OPTIONS() {
-  return new NextResponse(null, {
-    status: 200,
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type'
-    }
-  });
-}
+// Export registeredUsers để register route có thể thêm vào
+export { registeredUsers, mockUsers };

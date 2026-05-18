@@ -1,102 +1,64 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
+import { User } from '@/types';
 
-interface RegisterRequest {
-  name: string;
-  email: string;
-  password: string;
-}
+// In-memory store for registered users (shares with login route concept)
+const registeredEmails = new Set<string>(['minh@example.com', 'admin@example.com']);
 
-// Mock existing emails for validation
-const existingEmails = ['minh@example.com', 'test@example.com'];
-
-function generateToken(): string {
-  return `token_${Date.now()}_${Math.random().toString(36).substring(2, 15)}`;
-}
-
-function generateId(): string {
-  return `user_${Date.now()}`;
-}
-
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
-    const body: RegisterRequest = await request.json();
-    const { name, email, password } = body;
+    const { name, email, password } = await request.json();
 
-    // Validate required fields
+    // Validate
     if (!name || !email || !password) {
       return NextResponse.json(
-        { error: 'Missing required fields: name, email, password' },
+        { error: 'Tên, email và mật khẩu không được để trống.' },
         { status: 400 }
       );
     }
 
-    // Validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return NextResponse.json(
-        { error: 'Invalid email format' },
-        { status: 400 }
-      );
-    }
-
-    // Validate password length
     if (password.length < 6) {
       return NextResponse.json(
-        { error: 'Password must be at least 6 characters' },
+        { error: 'Mật khẩu phải có ít nhất 6 ký tự.' },
+        { status: 400 }
+      );
+    }
+
+    if (!email.includes('@')) {
+      return NextResponse.json(
+        { error: 'Email không hợp lệ.' },
         { status: 400 }
       );
     }
 
     // Check if email already exists
-    if (existingEmails.includes(email.toLowerCase())) {
+    if (registeredEmails.has(email)) {
       return NextResponse.json(
-        { error: 'Email already registered' },
+        { error: 'Email này đã được đăng ký. Hãy đăng nhập.' },
         { status: 409 }
       );
     }
 
-    // Create mock user
-    const user = {
-      id: generateId(),
+    // Create new user
+    const newUser: User = {
+      id: `user-${Date.now()}`,
       name,
-      email: email.toLowerCase(),
+      email,
       avatar_url: '',
-      role: 'student' as const,
+      role: 'student',
       xp: 0,
       level: 1,
       streak_count: 0,
       created_at: new Date().toISOString(),
-      last_active: new Date().toISOString()
+      last_active: new Date().toISOString(),
     };
 
-    const token = generateToken();
+    registeredEmails.add(email);
 
     return NextResponse.json(
-      { user, token },
-      {
-        status: 201,
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Content-Type': 'application/json'
-        }
-      }
+      { user: newUser, token: `mock-token-${newUser.id}`, message: 'Đăng ký thành công!' },
+      { status: 201 }
     );
-  } catch (error) {
-    console.error('Register error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+  } catch {
+    return NextResponse.json({ error: 'Lỗi server.' }, { status: 500 });
   }
-}
-
-export async function OPTIONS() {
-  return new NextResponse(null, {
-    status: 200,
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type'
-    }
-  });
 }

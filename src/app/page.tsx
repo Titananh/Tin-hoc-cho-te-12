@@ -17,38 +17,38 @@ import {
 const features = [
   {
     icon: Route,
-    title: "Học theo lộ trình",
-    description: "Từ cơ bản đến nâng cao, bài bản theo chương trình lớp 12",
+    title: "7 chủ đề SGK Cánh Diều",
+    description: "Bám sát chương trình GDPT 2018, từ CSDL đến Python và HTML",
   },
   {
     icon: BookOpen,
-    title: "Làm bài tập trực tiếp",
-    description: "Hàng trăm bài tập thực hành ngay trên nền tảng",
+    title: "Đề thi minh hoạ THPT",
+    description: "40 câu, 50 phút — đúng cấu trúc tốt nghiệp, chấm điểm ngay",
   },
   {
     icon: Brain,
-    title: "AI Tutor kèm riêng",
-    description: "Trợ lý AI giải đáp 24/7, giải thích chi tiết từng bước",
+    title: "Gia sư AI tiếng Việt",
+    description: "Hỏi đáp theo phạm vi SGK, gợi ý bài học liên quan",
   },
   {
     icon: BarChart3,
-    title: "Theo dõi tiến độ",
-    description: "Biểu đồ trực quan, đánh giá chính xác năng lực",
+    title: "Sân chơi SQL & Web",
+    description: "Thực hành SQL và HTML/CSS/JS trực tiếp trên trình duyệt",
   },
   {
     icon: Award,
-    title: "Nhận huy hiệu và XP",
-    description: "Hệ thống thành tích, vinh danh thành tích học tập",
+    title: "Theo dõi tiến độ",
+    description: "XP, huy hiệu, streak — ôn thi vui như chơi game",
   },
 ];
 
 const codeLines = [
-  { text: 'print(', color: "text-accent" },
-  { text: '"Xin chào học sinh lớp 12!"', color: "text-secondary" },
-  { text: ')', color: "text-accent" },
-  { text: "\n# Chương trình Python đầu tiên", color: "text-muted" },
-  { text: "\nfor i in range(5):", color: "text-primary" },
-  { text: '\n    print(f"Lần chạy #{i+1}")', color: "text-accent" },
+  { text: "SELECT HoTen, DiemTB", color: "text-primary" },
+  { text: "FROM HocSinh", color: "text-accent" },
+  { text: "WHERE DiemTB >= 8", color: "text-secondary" },
+  { text: "ORDER BY DiemTB DESC;", color: "text-accent" },
+  { text: "\n-- Truy vấn SQL cơ bản", color: "text-muted" },
+  { text: "\n-- Chủ đề D: CSDL & SQL", color: "text-muted" },
 ];
 
 const containerVariants = {
@@ -116,17 +116,17 @@ export default function Home() {
             <motion.div variants={itemVariants} className="space-y-4">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass">
                 <Zap className="w-4 h-4 text-accent" />
-                <span className="text-sm font-medium">Mới: AI Tutor thông minh</span>
+                <span className="text-sm font-medium">Ôn thi tốt nghiệp THPT 2025</span>
               </div>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
-                <span className="gradient-text">Học Python</span> từ cơ bản đến nâng cao
+                <span className="gradient-text">Tin học 12</span> — Ôn thi
                 <br />
-                dành riêng cho{" "}
-                <span className="gradient-text">học sinh lớp 12</span>
+                theo{" "}
+                <span className="gradient-text">SGK Cánh Diều</span>
               </h1>
               <p className="text-lg md:text-xl text-muted max-w-xl">
-                Nền tảng học lập trình Python hiện đại với lộ trình bài bản,
-                bài tập thực hành và trợ lý AI hỗ trợ 24/7
+                7 chủ đề SGK + đề thi minh hoạ + sân chơi SQL & Web + gia sư AI
+                tiếng Việt. Tất cả miễn phí, ngay trên trình duyệt.
               </p>
             </motion.div>
 
@@ -136,11 +136,11 @@ export default function Home() {
               className="flex flex-col sm:flex-row gap-4"
             >
               <Link
-                href="/dashboard"
+                href="/chu-de"
                 className="group relative inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl font-semibold text-white gradient-bg transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-primary/25"
               >
                 <Play className="w-5 h-5" />
-                Bắt đầu học miễn phí
+                Bắt đầu ôn thi
                 <motion.span
                   className="absolute inset-0 rounded-xl bg-white/20"
                   initial={{ scale: 0, opacity: 0 }}
@@ -149,11 +149,11 @@ export default function Home() {
                 />
               </Link>
               <Link
-                href="/learn"
+                href="/de-thi"
                 className="group inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl font-semibold glass border-2 border-primary/30 hover:border-primary transition-all duration-300 hover:scale-105"
               >
                 <Code2 className="w-5 h-5 text-primary" />
-                Xem lộ trình học
+                Làm đề thi thử
               </Link>
             </motion.div>
           </div>
@@ -174,7 +174,7 @@ export default function Home() {
                   <div className="w-3 h-3 rounded-full bg-success" />
                 </div>
                 <div className="flex-1 text-center text-sm text-muted font-mono">
-                  python-master-12.py
+                  tin-hoc-12.sql
                 </div>
               </div>
 
@@ -211,28 +211,28 @@ export default function Home() {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 2.2, duration: 0.3 }}
                     >
-                      Xin chào học sinh lớp 12!
+                      | HoTen          | DiemTB |
                     </motion.div>
                     <motion.div
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 2.4, duration: 0.3 }}
                     >
-                      Lần chạy #1
+                      | Trần Thị Bình  | 9.0    |
                     </motion.div>
                     <motion.div
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 2.6, duration: 0.3 }}
                     >
-                      Lần chạy #2
+                      | Nguyễn Văn An  | 8.5    |
                     </motion.div>
                     <motion.div
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 2.8, duration: 0.3 }}
                     >
-                      Lần chạy #3
+                      | Hoàng Thị Em   | 8.2    |
                     </motion.div>
                     <motion.div
                       initial={{ opacity: 0, y: 10 }}
@@ -240,7 +240,7 @@ export default function Home() {
                       transition={{ delay: 3.0, duration: 0.3 }}
                       className="text-primary"
                     >
-                      ...
+                      3 hàng
                     </motion.div>
                   </div>
                 </motion.div>

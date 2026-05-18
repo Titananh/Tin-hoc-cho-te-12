@@ -1,12 +1,14 @@
 {
-  "name": "python-master-12",
-  "version": "0.1.0",
+  "name": "tin-hoc-12-canh-dieu",
+  "version": "0.2.0",
+  "description": "Nền tảng ôn thi Tin học lớp 12 theo SGK Cánh Diều (chương trình GDPT 2018)",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@monaco-editor/react": "^4.7.0",

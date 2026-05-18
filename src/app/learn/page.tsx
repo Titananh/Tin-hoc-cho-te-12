@@ -307,13 +307,13 @@ export default function LearnPage() {
         >
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
             <Sparkles className="w-4 h-4" />
-            Python Master 12
+            Chuyên đề tự chọn
           </div>
           <h1 className="text-4xl font-bold mb-3 gradient-text">
             Lộ trình học Python
           </h1>
           <p className="text-lg text-muted">
-            Từ zero đến hero trong 10 cấp độ
+            10 cấp độ Python từ cơ bản đến nâng cao (bổ sung cho Chủ đề E)
           </p>
         </motion.div>
 

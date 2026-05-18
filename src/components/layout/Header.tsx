@@ -5,17 +5,12 @@ import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Menu, X, Search, Bell, Moon, Sun, User, 
-  BookOpen, Home, Trophy, MessageCircle, Settings, LogOut, PenTool
+  BookOpen, Home, Trophy, MessageCircle, Settings, LogOut, FileText, Database, Globe
 } from 'lucide-react';
 import { useTheme } from '@/lib/theme';
 import { useAuth } from '@/lib/auth';
-import { Sidebar } from './Sidebar';
 
-interface HeaderProps {
-  showSidebar?: boolean;
-}
-
-export function Header({ showSidebar = true }: HeaderProps) {
+export function Header() {
   const { theme, toggleTheme } = useTheme();
   const { user, logout } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -25,10 +20,11 @@ export function Header({ showSidebar = true }: HeaderProps) {
 
   const navItems = [
     { href: '/', icon: Home, label: 'Trang chủ' },
-    { href: '/learn', icon: BookOpen, label: 'Học' },
-    { href: '/practice', icon: PenTool, label: 'Bài tập' },
-    { href: '/tutor', icon: MessageCircle, label: 'AI Tutor' },
-    { href: '/badges', icon: Trophy, label: 'Huy hiệu' },
+    { href: '/chu-de', icon: BookOpen, label: 'Chủ đề SGK' },
+    { href: '/de-thi', icon: FileText, label: 'Đề thi' },
+    { href: '/sql-playground', icon: Database, label: 'SQL' },
+    { href: '/web-playground', icon: Globe, label: 'Web' },
+    { href: '/tutor', icon: MessageCircle, label: 'Gia sư AI' },
   ];
 
   return (
@@ -39,28 +35,22 @@ export function Header({ showSidebar = true }: HeaderProps) {
           <div className="flex items-center gap-4">
             <Link href="/" className="flex items-center gap-2">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-primary/25">
-                Py
+                12
               </div>
               <span className="font-bold text-lg hidden sm:block bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
-                Python Master 12
+                Tin học 12
               </span>
             </Link>
           </div>
 
           {/* Search Bar - Desktop */}
           <div className="hidden md:flex items-center flex-1 max-w-md mx-4">
-            <div className="relative w-full">
+            <Link href="/search" className="relative w-full">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <input
-                type="text"
-                placeholder="Tìm kiếm bài học..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 rounded-xl bg-background border border-border 
-                           focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none
-                           transition-all text-sm dark:bg-slate-900 dark:border-slate-700"
-              />
-            </div>
+              <div className="w-full pl-10 pr-4 py-2 rounded-xl bg-background border border-border text-sm text-muted cursor-pointer hover:border-primary/50 transition-colors">
+                Tìm kiếm bài học, chủ đề...
+              </div>
+            </Link>
           </div>
 
           {/* Navigation - Desktop */}
@@ -80,13 +70,13 @@ export function Header({ showSidebar = true }: HeaderProps) {
           {/* Actions */}
           <div className="flex items-center gap-2">
             {/* Mobile Search Toggle */}
-            <button
-              onClick={() => setIsSearchExpanded(!isSearchExpanded)}
+            <Link
+              href="/search"
               className="md:hidden p-2 rounded-lg hover:bg-accent transition-colors"
               aria-label="Tìm kiếm"
             >
               <Search className="w-5 h-5" />
-            </button>
+            </Link>
 
             {/* Theme Toggle */}
             <button
@@ -119,95 +109,67 @@ export function Header({ showSidebar = true }: HeaderProps) {
               </AnimatePresence>
             </button>
 
-            {/* Notification Bell */}
-            <button 
-              className="p-2 rounded-lg hover:bg-accent transition-colors relative"
-              aria-label="Thông báo"
-            >
-              <Bell className="w-5 h-5" />
-              <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse" />
-            </button>
+            {/* User Avatar / Login */}
+            {user ? (
+              <div className="relative">
+                <button
+                  onClick={() => setIsProfileOpen(!isProfileOpen)}
+                  className="flex items-center gap-2 p-2 rounded-lg hover:bg-accent transition-colors"
+                  aria-label="Hồ sơ"
+                >
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 flex items-center justify-center text-white text-sm font-medium shadow-lg">
+                    {user.name.charAt(0)}
+                  </div>
+                </button>
 
-            {/* User Avatar Dropdown */}
-            <div className="relative">
-              <button
-                onClick={() => setIsProfileOpen(!isProfileOpen)}
-                className="flex items-center gap-2 p-2 rounded-lg hover:bg-accent transition-colors"
-                aria-label="Hồ sơ"
-              >
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 flex items-center justify-center text-white text-sm font-medium shadow-lg">
-                  {user?.name?.charAt(0) || 'U'}
-                </div>
-              </button>
-
-              <AnimatePresence>
-                {isProfileOpen && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                    transition={{ duration: 0.15 }}
-                    className="absolute right-0 mt-2 w-64 rounded-xl bg-background border border-border shadow-xl overflow-hidden z-50"
-                  >
-                    {/* User Info Header */}
-                    <div className="p-4 border-b border-border bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-pink-500/10">
-                      <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 flex items-center justify-center text-white font-bold text-lg">
-                          {user?.name?.charAt(0) || 'U'}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="font-semibold truncate">{user?.name}</p>
-                          <p className="text-sm text-muted-foreground truncate">{user?.email}</p>
+                <AnimatePresence>
+                  {isProfileOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                      transition={{ duration: 0.15 }}
+                      className="absolute right-0 mt-2 w-64 rounded-xl bg-background border border-border shadow-xl overflow-hidden z-50"
+                    >
+                      <div className="p-4 border-b border-border">
+                        <p className="font-semibold truncate">{user.name}</p>
+                        <p className="text-sm text-muted truncate">{user.email}</p>
+                        <div className="flex items-center gap-3 mt-2 text-xs">
+                          <span className="font-bold text-primary">{user.xp} XP</span>
+                          <span className="text-muted">•</span>
+                          <span className="font-medium">Cấp {user.level}</span>
+                          <span className="text-muted">•</span>
+                          <span className="text-orange-500">🔥 {user.streak_count} ngày</span>
                         </div>
                       </div>
-                      <div className="flex items-center gap-4 mt-3 pt-3 border-t border-border/50">
-                        <span className="flex items-center gap-1.5 text-sm">
-                          <span className="font-bold text-blue-600 dark:text-blue-400">{user?.xp || 0} XP</span>
-                        </span>
-                        <span className="text-muted">•</span>
-                        <span className="text-sm font-medium text-amber-600 dark:text-amber-400">Level {user?.level || 1}</span>
-                        <span className="text-muted">•</span>
-                        <span className="text-sm text-orange-500">🔥 {user?.streak_count || 0} day streak</span>
+                      <div className="p-2">
+                        <Link href="/dashboard" className="flex items-center gap-3 p-3 rounded-lg hover:bg-accent transition-colors" onClick={() => setIsProfileOpen(false)}>
+                          <Home className="w-4 h-4" /> <span className="text-sm">Bảng điều khiển</span>
+                        </Link>
+                        <Link href="/profile" className="flex items-center gap-3 p-3 rounded-lg hover:bg-accent transition-colors" onClick={() => setIsProfileOpen(false)}>
+                          <User className="w-4 h-4" /> <span className="text-sm">Hồ sơ</span>
+                        </Link>
+                        <Link href="/settings" className="flex items-center gap-3 p-3 rounded-lg hover:bg-accent transition-colors" onClick={() => setIsProfileOpen(false)}>
+                          <Settings className="w-4 h-4" /> <span className="text-sm">Cài đặt</span>
+                        </Link>
                       </div>
-                    </div>
-                    
-                    {/* Menu Items */}
-                    <div className="p-2">
-                      <Link 
-                        href="/dashboard" 
-                        className="flex items-center gap-3 p-3 rounded-lg hover:bg-accent transition-colors"
-                        onClick={() => setIsProfileOpen(false)}
-                      >
-                        <User className="w-4 h-4" />
-                        <span className="text-sm font-medium">Hồ sơ</span>
-                      </Link>
-                      <Link 
-                        href="/settings" 
-                        className="flex items-center gap-3 p-3 rounded-lg hover:bg-accent transition-colors"
-                        onClick={() => setIsProfileOpen(false)}
-                      >
-                        <Settings className="w-4 h-4" />
-                        <span className="text-sm font-medium">Cài đặt</span>
-                      </Link>
-                    </div>
-                    
-                    {/* Logout */}
-                    <div className="p-2 border-t border-border">
-                      <button
-                        onClick={() => {
-                          logout();
-                          setIsProfileOpen(false);
-                        }}
-                        className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors text-red-600 dark:text-red-400"
-                      >
-                        <LogOut className="w-4 h-4" />
-                        <span className="text-sm font-medium">Đăng xuất</span>
-                      </button>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
+                      <div className="p-2 border-t border-border">
+                        <button
+                          onClick={() => { logout(); setIsProfileOpen(false); }}
+                          className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors text-red-600"
+                        >
+                          <LogOut className="w-4 h-4" /> <span className="text-sm font-medium">Đăng xuất</span>
+                        </button>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            ) : (
+              <Link href="/login" className="px-4 py-2 rounded-lg bg-primary text-white text-sm font-medium hover:bg-primary/90 transition-colors">
+                Đăng nhập
+              </Link>
+            )}
 
             {/* Mobile Menu Toggle */}
             <button
@@ -219,30 +181,6 @@ export function Header({ showSidebar = true }: HeaderProps) {
             </button>
           </div>
         </div>
-
-        {/* Mobile Search Expanded */}
-        <AnimatePresence>
-          {isSearchExpanded && (
-            <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: 'auto', opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              className="md:hidden border-t border-border px-4 py-3 bg-background"
-            >
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                <input
-                  type="text"
-                  placeholder="Tìm kiếm bài học..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-accent border border-border outline-none focus:border-primary"
-                  autoFocus
-                />
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
 
         {/* Mobile Navigation Menu */}
         <AnimatePresence>
@@ -266,6 +204,9 @@ export function Header({ showSidebar = true }: HeaderProps) {
                     <span className="font-medium">{item.label}</span>
                   </Link>
                 ))}
+                <Link href="/badges" className="flex items-center gap-3 p-3 rounded-xl hover:bg-accent transition-colors" onClick={() => setIsMenuOpen(false)}>
+                  <Trophy className="w-5 h-5" /> <span className="font-medium">Huy hiệu</span>
+                </Link>
               </div>
             </motion.div>
           )}
@@ -273,12 +214,7 @@ export function Header({ showSidebar = true }: HeaderProps) {
       </header>
 
       {/* Click outside to close profile dropdown */}
-      {isProfileOpen && (
-        <div 
-          className="fixed inset-0 z-40" 
-          onClick={() => setIsProfileOpen(false)} 
-        />
-      )}
+      {isProfileOpen && <div className="fixed inset-0 z-40" onClick={() => setIsProfileOpen(false)} />}
     </>
   );
 }

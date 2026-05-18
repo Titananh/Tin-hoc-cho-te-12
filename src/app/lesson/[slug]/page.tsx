@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '@/lib/theme';
 import { courses } from '@/data/content';
+import { topics } from '@/data/canhdieu';
 import { Lesson, Module, Course, CodeExample, QuizQuestion } from '@/types';
 import {
   ChevronRight,
@@ -23,8 +24,9 @@ import {
   Play
 } from 'lucide-react';
 
-// Find lesson by slug from all courses
+// Find lesson by slug from all courses AND topics (canhdieu)
 function findLesson(slug: string): { lesson: Lesson; module: Module; course: Course } | null {
+  // Search in content.ts (Python 10 levels) — by lesson slug
   for (const course of courses) {
     for (const module of course.modules) {
       const lesson = module.lessons.find(l => l.slug === slug);
@@ -33,6 +35,48 @@ function findLesson(slug: string): { lesson: Lesson; module: Module; course: Cou
       }
     }
   }
+
+  // Also try by course slug → return first lesson of that course
+  const courseBySlug = courses.find(c => c.slug === slug);
+  if (courseBySlug && courseBySlug.modules[0]?.lessons[0]) {
+    return {
+      lesson: courseBySlug.modules[0].lessons[0],
+      module: courseBySlug.modules[0],
+      course: courseBySlug,
+    };
+  }
+
+  // Search in canhdieu.ts (7 chủ đề SGK)
+  for (const topic of topics) {
+    const lesson = topic.lessons.find(l => l.slug === slug);
+    if (lesson) {
+      // Wrap topic as Course/Module for compatibility
+      const fakeCourse: Course = {
+        id: topic.id,
+        title: topic.title,
+        slug: topic.id.toLowerCase(),
+        description: topic.description,
+        icon: topic.icon,
+        color: topic.color,
+        order_index: topic.order_index,
+        is_published: true,
+        modules: [{
+          id: topic.id,
+          course_id: topic.id,
+          title: topic.title,
+          slug: topic.id.toLowerCase(),
+          description: topic.description,
+          icon: topic.icon,
+          color: topic.color,
+          order_index: 1,
+          lessons: topic.lessons,
+        }],
+      };
+      const fakeModule: Module = fakeCourse.modules[0];
+      return { lesson, module: fakeModule, course: fakeCourse };
+    }
+  }
+
   return null;
 }
 
