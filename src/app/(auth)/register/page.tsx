@@ -1,11 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Mail, Lock, Eye, EyeOff, Code2, AlertCircle, Loader2, User, CheckCircle2 } from 'lucide-react';
 import Link from 'next/link';
+import { register } from '@/lib/client-auth';
 
 interface ValidationErrors {
   name?: string;
@@ -75,33 +75,11 @@ export default function RegisterPage() {
     setIsLoading(true);
 
     try {
-      // Call register API
-      const response = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, password }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        setError(data.error ?? 'Đăng ký thất bại. Vui lòng thử lại.');
-        return;
-      }
-
-      // Auto sign-in after successful registration
-      const signInResult = await signIn('credentials', {
-        email,
-        password,
-        redirect: false,
-      });
-
-      if (signInResult?.error) {
-        // Registration succeeded but auto-login failed, redirect to login
-        router.push('/login?registered=true');
-      } else {
+      const result = register(name, email, password);
+      if (result.success) {
         router.push('/dashboard');
-        router.refresh();
+      } else {
+        setError(result.error || 'Đăng ký thất bại');
       }
     } catch {
       setError('Đã xảy ra lỗi. Vui lòng thử lại sau.');
@@ -113,13 +91,9 @@ export default function RegisterPage() {
   const handleGoogleSignIn = async () => {
     setIsGoogleLoading(true);
     setError(null);
-
-    try {
-      await signIn('google', { callbackUrl: '/dashboard' });
-    } catch {
-      setError('Đăng nhập Google thất bại. Vui lòng thử lại.');
-      setIsGoogleLoading(false);
-    }
+    // Google sign-in not available in localStorage mode
+    setError('Đăng ký Google không khả dụng. Vui lòng dùng email/mật khẩu.');
+    setIsGoogleLoading(false);
   };
 
   return (

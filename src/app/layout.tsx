@@ -4,6 +4,7 @@ import './globals.css';
 import SessionProvider from '@/components/providers/SessionProvider';
 import Navbar from '@/components/layout/Navbar';
 import { ToastProvider } from '@/components/common/Toast';
+import { AuthGuard } from '@/components/common/AuthGuard';
 
 const inter = Inter({
   subsets: ['latin', 'vietnamese'],
@@ -67,8 +68,10 @@ export default function RootLayout({
       <body className={`${inter.className} antialiased`}>
         <SessionProvider>
           <ToastProvider>
-            <Navbar />
-            {children}
+            <AuthGuard>
+              <Navbar />
+              {children}
+            </AuthGuard>
           </ToastProvider>
         </SessionProvider>
       </body>

@@ -1,11 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { signIn } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Mail, Lock, Eye, EyeOff, Code2, AlertCircle, Loader2 } from 'lucide-react';
 import Link from 'next/link';
+import { login } from '@/lib/client-auth';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -32,17 +32,11 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-      const result = await signIn('credentials', {
-        email,
-        password,
-        redirect: false,
-      });
-
-      if (result?.error) {
-        setError(result.error);
-      } else {
+      const result = login(email, password);
+      if (result.success) {
         router.push(callbackUrl);
-        router.refresh();
+      } else {
+        setError(result.error || 'Đăng nhập thất bại');
       }
     } catch {
       setError('Đã xảy ra lỗi. Vui lòng thử lại sau.');
@@ -54,13 +48,9 @@ export default function LoginPage() {
   const handleGoogleSignIn = async () => {
     setIsGoogleLoading(true);
     setError(null);
-
-    try {
-      await signIn('google', { callbackUrl });
-    } catch {
-      setError('Đăng nhập Google thất bại. Vui lòng thử lại.');
-      setIsGoogleLoading(false);
-    }
+    // Google sign-in not available in localStorage mode
+    setError('Đăng nhập Google không khả dụng. Vui lòng dùng email/mật khẩu.');
+    setIsGoogleLoading(false);
   };
 
   return (

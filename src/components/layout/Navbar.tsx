@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useSession, signOut } from 'next-auth/react';
+import { getCurrentUser, logout, type User } from '@/lib/client-auth';
 import { useState, useEffect, useRef } from 'react';
 import {
   GraduationCap,
@@ -42,10 +42,14 @@ const NAV_ITEMS: NavItem[] = [
 
 export default function Navbar() {
   const pathname = usePathname();
-  const { data: session, status } = useSession();
+  const [user, setUser] = useState<User | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setUser(getCurrentUser());
+  }, [pathname]);
 
   useEffect(() => {
     function onClick(e: MouseEvent) {
@@ -57,7 +61,7 @@ export default function Navbar() {
     return () => document.removeEventListener('mousedown', onClick);
   }, []);
 
-  const isAuthenticated = status === 'authenticated';
+  const isAuthenticated = user !== null;
 
   // Hide navbar on the public landing page (it has its own header) and on the
   // auth pages (login / register / forgot-password / reset-password).
@@ -130,7 +134,7 @@ export default function Navbar() {
                     className="flex items-center gap-2 p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
                   >
                     <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold text-sm">
-                      {session?.user?.name?.[0]?.toUpperCase() ?? 'U'}
+                      {user?.name?.[0]?.toUpperCase() ?? 'U'}
                     </div>
                     <ChevronDown className="w-4 h-4 text-slate-500 hidden sm:inline" />
                   </button>
@@ -139,10 +143,10 @@ export default function Navbar() {
                     <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700 py-1 overflow-hidden">
                       <div className="px-4 py-3 border-b border-slate-200 dark:border-slate-700">
                         <p className="font-semibold text-slate-900 dark:text-white truncate">
-                          {session?.user?.name}
+                          {user?.name}
                         </p>
                         <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
-                          {session?.user?.email}
+                          {user?.email}
                         </p>
                       </div>
                       <Link
@@ -170,7 +174,7 @@ export default function Navbar() {
                         Cài đặt
                       </Link>
                       <button
-                        onClick={() => signOut({ callbackUrl: '/' })}
+                        onClick={() => { logout(); window.location.href = '/'; }}
                         className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20"
                       >
                         <LogOut className="w-4 h-4" />

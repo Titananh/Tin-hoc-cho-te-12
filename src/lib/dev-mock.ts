@@ -150,15 +150,7 @@ export function getDevDashboardData(userId: string, name: string) {
       title: DEV_LESSONS[0].title,
     },
     recentBadges: [],
-    incompleteExercises: DEV_EXERCISES.slice(0, 20).map((ex) => {
-      const lesson = DEV_LESSONS.find((l) => l.id === ex.lesson_id)!;
-      return {
-        exerciseId: ex.id,
-        lessonId: ex.lesson_id,
-        courseOrderIndex: lesson.course_id,
-        moduleOrderIndex: lesson.order_index,
-      };
-    }),
+    incompleteExercises: [],
     learningCalendar: calendar,
     xpPerDay,
     dailyGoals: {
