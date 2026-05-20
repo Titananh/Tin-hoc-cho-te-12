@@ -56,16 +56,21 @@ function ResetPasswordForm() {
     setIsLoading(true);
 
     try {
-      const response = await fetch('/api/auth/reset-password', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token, password }),
+      // Supabase handles the token from the URL automatically via session
+      const { getSupabase, isSupabaseConfigured } = await import('@/lib/supabase-browser');
+      
+      if (!isSupabaseConfigured()) {
+        setError('Chức năng đặt lại mật khẩu chưa được cấu hình.');
+        return;
+      }
+
+      const supabase = getSupabase()!;
+      const { error: updateError } = await supabase.auth.updateUser({
+        password: password,
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        setError(data.error ?? 'Đã xảy ra lỗi. Vui lòng thử lại.');
+      if (updateError) {
+        setError(updateError.message);
         return;
       }
 
@@ -77,29 +82,9 @@ function ResetPasswordForm() {
     }
   };
 
-  // No token provided
-  if (!token) {
-    return (
-      <div className="text-center">
-        <div className="mx-auto w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mb-4">
-          <AlertCircle className="w-8 h-8 text-red-600 dark:text-red-400" />
-        </div>
-        <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">
-          Liên kết không hợp lệ
-        </h2>
-        <p className="text-sm text-slate-600 dark:text-slate-400 mb-6">
-          Liên kết đặt lại mật khẩu không hợp lệ hoặc đã hết hạn.
-          Vui lòng yêu cầu liên kết mới.
-        </p>
-        <Link
-          href="/forgot-password"
-          className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-medium hover:opacity-90 transition-opacity"
-        >
-          Yêu cầu liên kết mới
-        </Link>
-      </div>
-    );
-  }
+  // Supabase recovery flow: user arrives here after clicking email link.
+  // The session is automatically set by Supabase from the URL hash.
+  // No explicit token check needed.
 
   // Success state
   if (isSuccess) {

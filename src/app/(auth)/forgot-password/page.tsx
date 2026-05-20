@@ -17,16 +17,21 @@ export default function ForgotPasswordPage() {
     setIsLoading(true);
 
     try {
-      const response = await fetch('/api/auth/forgot-password', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
+      // Use Supabase directly for password reset
+      const { getSupabase, isSupabaseConfigured } = await import('@/lib/supabase-browser');
+      
+      if (!isSupabaseConfigured()) {
+        setError('Chức năng quên mật khẩu chưa được cấu hình. Vui lòng liên hệ quản trị viên.');
+        return;
+      }
+
+      const supabase = getSupabase()!;
+      const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        setError(data.error ?? 'Đã xảy ra lỗi. Vui lòng thử lại.');
+      if (resetError) {
+        setError(resetError.message);
         return;
       }
 
