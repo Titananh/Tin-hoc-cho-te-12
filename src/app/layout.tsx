@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
-import SessionProvider from '@/components/providers/SessionProvider';
 import Navbar from '@/components/layout/Navbar';
 import { ToastProvider } from '@/components/common/Toast';
 import { AuthGuard } from '@/components/common/AuthGuard';
@@ -66,14 +65,12 @@ export default function RootLayout({
         <meta name="theme-color" content="#1e293b" />
       </head>
       <body className={`${inter.className} antialiased`}>
-        <SessionProvider>
-          <ToastProvider>
-            <AuthGuard>
-              <Navbar />
-              {children}
-            </AuthGuard>
-          </ToastProvider>
-        </SessionProvider>
+        <ToastProvider>
+          <AuthGuard>
+            <Navbar />
+            {children}
+          </AuthGuard>
+        </ToastProvider>
       </body>
     </html>
   );

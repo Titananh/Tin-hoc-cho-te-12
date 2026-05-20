@@ -2,9 +2,8 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useSession } from 'next-auth/react';
 import {
-  User,
+  User as UserIcon,
   Camera,
   Edit3,
   Check,
@@ -17,7 +16,6 @@ import {
   Briefcase,
   Calendar,
   Trophy,
-  Shield,
   Star,
   Loader2,
   AlertCircle,
@@ -25,47 +23,43 @@ import {
   TrendingUp,
 } from 'lucide-react';
 
-// ─── Types ───────────────────────────────────────────────────────────────────
+import {
+  getCurrentUser,
+  type User as ClientUser,
+} from '@/lib/client-auth';
+import {
+  getGamificationState,
+  getLevelTitle,
+  type GamificationState,
+} from '@/lib/gamification-store';
+import { getSolvedCount } from '@/lib/solved-tracker';
 
-interface UserProfile {
-  id: string;
-  name: string;
-  email: string;
-  avatar_url: string | null;
-  role: string;
-  xp: number;
-  level: number;
-  streak_count: number;
-  created_at: string;
-  badges_earned: number;
-  lessons_completed: number;
-  exercises_solved: number;
+// ─── Helpers ────────────────────────────────────────────────────────────────
+
+const PROFILE_KEY = 'python_master_profile';
+
+interface ExtraProfile {
+  displayName?: string;
+  avatarDataUrl?: string;
 }
 
-interface UserStats {
-  total_xp: number;
-  current_level: number;
-  current_streak: number;
-  longest_streak: number;
-  badges_count: number;
-  lessons_completed: number;
-  exercises_solved: number;
-  projects_finished: number;
-  join_date: string;
+function getExtraProfile(): ExtraProfile {
+  if (typeof window === 'undefined') return {};
+  try {
+    const data = localStorage.getItem(PROFILE_KEY);
+    return data ? JSON.parse(data) : {};
+  } catch {
+    return {};
+  }
 }
 
-interface BadgeItem {
-  id: string;
-  name: string;
-  description: string;
-  icon: string;
-  color: string;
-  earned_at: string;
+function saveExtraProfile(p: ExtraProfile): void {
+  if (typeof window === 'undefined') return;
+  localStorage.setItem(PROFILE_KEY, JSON.stringify(p));
 }
-
-// ─── Helper Functions ────────────────────────────────────────────────────────
 
 function formatDate(dateStr: string): string {
+  if (!dateStr) return '';
   const date = new Date(dateStr);
   return date.toLocaleDateString('vi-VN', {
     day: 'numeric',
@@ -74,39 +68,13 @@ function formatDate(dateStr: string): string {
   });
 }
 
-function getLevelTitle(level: number): string {
-  if (level >= 10) return 'Bậc Thầy Python';
-  if (level >= 8) return 'Chuyên Gia';
-  if (level >= 6) return 'Lập Trình Viên';
-  if (level >= 4) return 'Học Viên Nâng Cao';
-  if (level >= 2) return 'Học Viên';
-  return 'Người Mới Bắt Đầu';
-}
-
 function getLevelColor(level: number): string {
-  if (level >= 10) return '#F59E0B';
-  if (level >= 8) return '#8B5CF6';
-  if (level >= 6) return '#3B82F6';
-  if (level >= 4) return '#10B981';
+  if (level >= 30) return '#F59E0B';
+  if (level >= 20) return '#8B5CF6';
+  if (level >= 10) return '#3B82F6';
+  if (level >= 5) return '#10B981';
   if (level >= 2) return '#06B6D4';
   return '#6B7280';
-}
-
-// ─── Badge Icon Mapping ──────────────────────────────────────────────────────
-
-function getBadgeIcon(iconName: string) {
-  const iconMap: Record<string, typeof Trophy> = {
-    trophy: Trophy,
-    flame: Flame,
-    star: Star,
-    zap: Zap,
-    award: Award,
-    shield: Shield,
-    book: BookOpen,
-    code: Code2,
-    briefcase: Briefcase,
-  };
-  return iconMap[iconName] || Award;
 }
 
 // ─── Components ──────────────────────────────────────────────────────────────
@@ -137,222 +105,56 @@ function StatCard({
       >
         <Icon className="w-5 h-5" style={{ color }} />
       </div>
-      <div className="text-2xl font-bold text-slate-900 dark:text-white">{value}</div>
-      <div className="text-sm text-slate-500 dark:text-slate-400 mt-1">{label}</div>
-    </motion.div>
-  );
-}
-
-function BadgeCard({ badge, index }: { badge: BadgeItem; index: number }) {
-  const IconComponent = getBadgeIcon(badge.icon);
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.9 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.3, delay: index * 0.05 }}
-      className="flex flex-col items-center gap-2 p-4 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 hover:shadow-md transition-shadow"
-    >
-      <div
-        className="w-12 h-12 rounded-full flex items-center justify-center"
-        style={{ backgroundColor: `${badge.color}20` }}
-      >
-        <IconComponent className="w-6 h-6" style={{ color: badge.color }} />
+      <div className="text-2xl font-bold text-slate-900 dark:text-white">
+        {value}
       </div>
-      <span className="text-xs font-medium text-slate-700 dark:text-slate-300 text-center leading-tight">
-        {badge.name}
-      </span>
+      <div className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+        {label}
+      </div>
     </motion.div>
   );
 }
 
-// ─── Main Page Component ─────────────────────────────────────────────────────
+// ─── Main Page ───────────────────────────────────────────────────────────────
 
 export default function ProfilePage() {
-  const { data: session, status } = useSession();
-
-  const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [stats, setStats] = useState<UserStats | null>(null);
-  const [badges, setBadges] = useState<BadgeItem[]>([]);
+  const [authUser, setAuthUser] = useState<ClientUser | null>(null);
+  const [extra, setExtra] = useState<ExtraProfile>({});
+  const [state, setState] = useState<GamificationState | null>(null);
+  const [solvedCount, setSolvedCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   // Inline edit state
   const [isEditingName, setIsEditingName] = useState(false);
   const [editName, setEditName] = useState('');
-  const [isSavingName, setIsSavingName] = useState(false);
   const [nameError, setNameError] = useState<string | null>(null);
-
-  // Avatar upload state
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // ─── Fetch Data ──────────────────────────────────────────────────────────
-
   useEffect(() => {
-    if (status === 'authenticated') {
-      fetchProfileData();
-    }
-  }, [status]);
+    const u = getCurrentUser();
+    setAuthUser(u);
+    setExtra(getExtraProfile());
+    setState(getGamificationState());
+    setSolvedCount(getSolvedCount());
+    setIsLoading(false);
+  }, []);
 
-  async function fetchProfileData() {
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      const [profileRes, statsRes] = await Promise.all([
-        fetch('/api/user/profile'),
-        fetch('/api/user/stats'),
-      ]);
-
-      if (!profileRes.ok) {
-        throw new Error('Không thể tải thông tin cá nhân');
-      }
-
-      if (!statsRes.ok) {
-        throw new Error('Không thể tải thống kê');
-      }
-
-      const profileData = await profileRes.json();
-      const statsData = await statsRes.json();
-
-      setProfile(profileData.user);
-      setStats(statsData.stats);
-      setEditName(profileData.user.name);
-
-      // Fetch badges (mock for now since no dedicated badges endpoint for user)
-      setBadges([]);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Đã xảy ra lỗi');
-    } finally {
-      setIsLoading(false);
-    }
-  }
-
-  // ─── Name Edit Handlers ──────────────────────────────────────────────────
-
-  function startEditingName() {
-    setIsEditingName(true);
-    setNameError(null);
-  }
-
-  function cancelEditingName() {
-    setIsEditingName(false);
-    setEditName(profile?.name || '');
-    setNameError(null);
-  }
-
-  async function saveDisplayName() {
-    const trimmed = editName.trim();
-
-    if (trimmed.length < 2 || trimmed.length > 50) {
-      setNameError('Tên phải từ 2 đến 50 ký tự');
-      return;
-    }
-
-    setIsSavingName(true);
-    setNameError(null);
-
-    try {
-      const res = await fetch('/api/user/profile', {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: trimmed }),
-      });
-
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || 'Không thể cập nhật tên');
-      }
-
-      const data = await res.json();
-      setProfile((prev) => (prev ? { ...prev, name: data.user.name } : prev));
-      setIsEditingName(false);
-    } catch (err) {
-      setNameError(err instanceof Error ? err.message : 'Lỗi cập nhật');
-    } finally {
-      setIsSavingName(false);
-    }
-  }
-
-  // ─── Avatar Upload Handlers ──────────────────────────────────────────────
-
-  function triggerAvatarUpload() {
-    fileInputRef.current?.click();
-  }
-
-  async function handleAvatarChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    // Client-side validation
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
-    if (!allowedTypes.includes(file.type)) {
-      alert('Chỉ chấp nhận file ảnh JPEG, PNG hoặc WebP');
-      return;
-    }
-
-    if (file.size > 2 * 1024 * 1024) {
-      alert('Kích thước file không được vượt quá 2MB');
-      return;
-    }
-
-    setIsUploadingAvatar(true);
-
-    try {
-      const formData = new FormData();
-      formData.append('avatar', file);
-
-      const res = await fetch('/api/user/avatar', {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || 'Không thể tải ảnh lên');
-      }
-
-      const data = await res.json();
-      setProfile((prev) => (prev ? { ...prev, avatar_url: data.avatar_url } : prev));
-    } catch (err) {
-      alert(err instanceof Error ? err.message : 'Lỗi tải ảnh');
-    } finally {
-      setIsUploadingAvatar(false);
-      // Reset input
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
-      }
-    }
-  }
-
-  // ─── Loading State ───────────────────────────────────────────────────────
-
-  if (status === 'loading' || isLoading) {
+  if (isLoading || !state) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800 flex items-center justify-center">
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="flex flex-col items-center gap-4"
-        >
+        <div className="flex flex-col items-center gap-4">
           <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
-          <p className="text-slate-500 dark:text-slate-400">Đang tải thông tin...</p>
-        </motion.div>
+          <p className="text-slate-500 dark:text-slate-400">Đang tải...</p>
+        </div>
       </div>
     );
   }
 
-  // ─── Unauthenticated State ───────────────────────────────────────────────
-
-  if (status === 'unauthenticated') {
+  if (!authUser) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800 flex items-center justify-center">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center p-8"
-        >
+        <div className="text-center p-8">
           <AlertCircle className="w-12 h-12 text-yellow-500 mx-auto mb-4" />
           <h2 className="text-xl font-semibold text-slate-900 dark:text-white mb-2">
             Bạn cần đăng nhập
@@ -366,45 +168,77 @@ export default function ProfilePage() {
           >
             Đăng Nhập
           </a>
-        </motion.div>
+        </div>
       </div>
     );
   }
 
-  // ─── Error State ─────────────────────────────────────────────────────────
+  const displayName = extra.displayName ?? authUser.name;
+  const avatarUrl = extra.avatarDataUrl ?? null;
 
-  if (error) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800 flex items-center justify-center">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center p-8"
-        >
-          <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
-          <h2 className="text-xl font-semibold text-slate-900 dark:text-white mb-2">
-            Đã xảy ra lỗi
-          </h2>
-          <p className="text-slate-500 dark:text-slate-400 mb-6">{error}</p>
-          <button
-            onClick={fetchProfileData}
-            className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-medium hover:opacity-90 transition-opacity"
-          >
-            Thử lại
-          </button>
-        </motion.div>
-      </div>
-    );
+  function startEditingName() {
+    setEditName(displayName);
+    setIsEditingName(true);
+    setNameError(null);
   }
 
-  if (!profile || !stats) return null;
+  function cancelEditingName() {
+    setIsEditingName(false);
+    setEditName('');
+    setNameError(null);
+  }
 
-  // ─── Main Render ─────────────────────────────────────────────────────────
+  function saveDisplayName() {
+    const trimmed = editName.trim();
+    if (trimmed.length < 2 || trimmed.length > 50) {
+      setNameError('Tên phải từ 2 đến 50 ký tự');
+      return;
+    }
+    const next = { ...extra, displayName: trimmed };
+    setExtra(next);
+    saveExtraProfile(next);
+    setIsEditingName(false);
+  }
+
+  function triggerAvatarUpload() {
+    fileInputRef.current?.click();
+  }
+
+  function handleAvatarChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
+      alert('Chỉ chấp nhận file ảnh JPEG, PNG hoặc WebP');
+      return;
+    }
+    if (file.size > 1024 * 1024) {
+      alert('Kích thước file không được vượt quá 1MB (do lưu trên trình duyệt)');
+      return;
+    }
+
+    setIsUploadingAvatar(true);
+    const reader = new FileReader();
+    reader.onload = () => {
+      const dataUrl = String(reader.result);
+      const next = { ...extra, avatarDataUrl: dataUrl };
+      setExtra(next);
+      saveExtraProfile(next);
+      setIsUploadingAvatar(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    };
+    reader.onerror = () => {
+      alert('Không thể đọc file ảnh');
+      setIsUploadingAvatar(false);
+    };
+    reader.readAsDataURL(file);
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800 transition-colors duration-300">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Page Header */}
+        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -426,7 +260,6 @@ export default function ProfilePage() {
           className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 p-6 sm:p-8 mb-8"
         >
           <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
-            {/* Avatar */}
             <div className="relative group">
               <div
                 className="w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center cursor-pointer ring-4 ring-white dark:ring-slate-700 shadow-lg"
@@ -436,17 +269,15 @@ export default function ProfilePage() {
                 tabIndex={0}
                 onKeyDown={(e) => e.key === 'Enter' && triggerAvatarUpload()}
               >
-                {profile.avatar_url ? (
+                {avatarUrl ? (
                   <img
-                    src={profile.avatar_url}
-                    alt={profile.name}
+                    src={avatarUrl}
+                    alt={displayName}
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <User className="w-12 h-12 text-white" />
+                  <UserIcon className="w-12 h-12 text-white" />
                 )}
-
-                {/* Overlay on hover */}
                 <div className="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                   {isUploadingAvatar ? (
                     <Loader2 className="w-6 h-6 text-white animate-spin" />
@@ -455,8 +286,6 @@ export default function ProfilePage() {
                   )}
                 </div>
               </div>
-
-              {/* Hidden file input */}
               <input
                 ref={fileInputRef}
                 type="file"
@@ -467,9 +296,7 @@ export default function ProfilePage() {
               />
             </div>
 
-            {/* User Info */}
             <div className="flex-1 text-center sm:text-left">
-              {/* Name with inline edit */}
               <div className="flex items-center justify-center sm:justify-start gap-2 mb-1">
                 {isEditingName ? (
                   <div className="flex items-center gap-2">
@@ -487,15 +314,10 @@ export default function ProfilePage() {
                     />
                     <button
                       onClick={saveDisplayName}
-                      disabled={isSavingName}
-                      className="p-1.5 rounded-lg bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 hover:bg-green-200 dark:hover:bg-green-900/50 transition-colors disabled:opacity-50"
+                      className="p-1.5 rounded-lg bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 hover:bg-green-200 dark:hover:bg-green-900/50 transition-colors"
                       aria-label="Lưu tên"
                     >
-                      {isSavingName ? (
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                      ) : (
-                        <Check className="w-4 h-4" />
-                      )}
+                      <Check className="w-4 h-4" />
                     </button>
                     <button
                       onClick={cancelEditingName}
@@ -508,7 +330,7 @@ export default function ProfilePage() {
                 ) : (
                   <>
                     <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
-                      {profile.name}
+                      {displayName}
                     </h2>
                     <button
                       onClick={startEditingName}
@@ -521,7 +343,6 @@ export default function ProfilePage() {
                 )}
               </div>
 
-              {/* Name error */}
               <AnimatePresence>
                 {nameError && (
                   <motion.p
@@ -535,40 +356,42 @@ export default function ProfilePage() {
                 )}
               </AnimatePresence>
 
-              {/* Level badge */}
+              <p className="text-sm text-slate-500 dark:text-slate-400 mb-2">
+                {authUser.email}
+              </p>
+
               <div className="flex items-center justify-center sm:justify-start gap-2 mb-3">
                 <span
                   className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium"
                   style={{
-                    backgroundColor: `${getLevelColor(profile.level)}20`,
-                    color: getLevelColor(profile.level),
+                    backgroundColor: `${getLevelColor(state.level)}20`,
+                    color: getLevelColor(state.level),
                   }}
                 >
                   <Star className="w-3.5 h-3.5" />
-                  Cấp {profile.level} - {getLevelTitle(profile.level)}
+                  Cấp {state.level} - {getLevelTitle(state.level)}
                 </span>
               </div>
 
-              {/* Quick stats row */}
               <div className="flex flex-wrap items-center justify-center sm:justify-start gap-4 text-sm text-slate-600 dark:text-slate-400">
                 <span className="flex items-center gap-1">
                   <Zap className="w-4 h-4 text-yellow-500" />
-                  {stats.total_xp.toLocaleString()} XP
+                  {state.totalXP.toLocaleString()} XP
                 </span>
                 <span className="flex items-center gap-1">
                   <Flame className="w-4 h-4 text-orange-500" />
-                  {stats.current_streak} ngày streak
+                  {state.streak.current} ngày streak
                 </span>
                 <span className="flex items-center gap-1">
                   <Calendar className="w-4 h-4 text-blue-500" />
-                  Tham gia {formatDate(profile.created_at)}
+                  Tham gia {formatDate(authUser.createdAt)}
                 </span>
               </div>
             </div>
           </div>
         </motion.div>
 
-        {/* Statistics Grid */}
+        {/* Stats grid */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -582,28 +405,28 @@ export default function ProfilePage() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <StatCard
               icon={BookOpen}
-              value={stats.lessons_completed}
+              value={state.lessonsCompleted}
               label="Bài học hoàn thành"
               color="#3B82F6"
               index={0}
             />
             <StatCard
               icon={Code2}
-              value={stats.exercises_solved}
+              value={state.problemsSolved + solvedCount}
               label="Bài tập đã giải"
               color="#10B981"
               index={1}
             />
             <StatCard
               icon={Briefcase}
-              value={stats.projects_finished}
-              label="Dự án hoàn thành"
+              value={state.hardProblemsSolved}
+              label="Bài khó hoàn thành"
               color="#8B5CF6"
               index={2}
             />
             <StatCard
               icon={Award}
-              value={stats.badges_count}
+              value={state.unlockedAchievements.length}
               label="Huy hiệu đạt được"
               color="#F59E0B"
               index={3}
@@ -611,7 +434,7 @@ export default function ProfilePage() {
           </div>
         </motion.div>
 
-        {/* Badges Section */}
+        {/* Badges section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -622,35 +445,37 @@ export default function ProfilePage() {
             <Trophy className="w-5 h-5 text-yellow-500" />
             Huy Hiệu Đã Đạt
           </h3>
-
-          {badges.length > 0 ? (
-            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
-              {badges.map((badge, index) => (
-                <BadgeCard key={badge.id} badge={badge} index={index} />
-              ))}
-            </div>
-          ) : (
+          {state.unlockedAchievements.length === 0 ? (
             <div className="text-center py-8">
               <Award className="w-12 h-12 text-slate-300 dark:text-slate-600 mx-auto mb-3" />
               <p className="text-slate-500 dark:text-slate-400">
-                {stats.badges_count > 0
-                  ? `Bạn đã đạt ${stats.badges_count} huy hiệu. Xem chi tiết tại trang Thành tựu.`
-                  : 'Chưa có huy hiệu nào. Hãy hoàn thành bài học để nhận huy hiệu đầu tiên!'}
+                Chưa có huy hiệu nào. Hãy hoàn thành bài học để nhận huy hiệu đầu tiên!
               </p>
-              {stats.badges_count > 0 && (
-                <a
-                  href="/achievements"
-                  className="inline-flex items-center gap-1 mt-3 text-sm text-blue-600 dark:text-blue-400 hover:underline"
-                >
-                  Xem tất cả thành tựu
-                  <Star className="w-3.5 h-3.5" />
-                </a>
-              )}
+            </div>
+          ) : (
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
+              {state.unlockedAchievements.map((id) => {
+                const achievement = state.achievements.find((a) => a.id === id);
+                if (!achievement) return null;
+                return (
+                  <motion.div
+                    key={id}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="flex flex-col items-center gap-2 p-4 bg-slate-50 dark:bg-slate-700/50 rounded-xl border border-slate-200 dark:border-slate-700"
+                  >
+                    <div className="text-3xl">{achievement.icon}</div>
+                    <span className="text-xs font-medium text-slate-700 dark:text-slate-300 text-center leading-tight">
+                      {achievement.title}
+                    </span>
+                  </motion.div>
+                );
+              })}
             </div>
           )}
         </motion.div>
 
-        {/* Certificates Section (Placeholder) */}
+        {/* Certificates placeholder */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -661,7 +486,6 @@ export default function ProfilePage() {
             <FileText className="w-5 h-5 text-purple-500" />
             Chứng Chỉ
           </h3>
-
           <div className="text-center py-8">
             <div className="w-16 h-16 rounded-2xl bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center mx-auto mb-4">
               <FileText className="w-8 h-8 text-purple-500" />

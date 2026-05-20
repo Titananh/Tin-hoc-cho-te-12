@@ -116,10 +116,9 @@ export async function PATCH(request: NextRequest) {
     // Đánh dấu đã đọc (chỉ cho notifications thuộc user hiện tại)
     const { error: updateError, count } = await supabaseAdmin
       .from('notifications')
-      .update({ is_read: true })
+      .update({ is_read: true }, { count: 'exact' })
       .eq('user_id', userId)
-      .in('id', notificationIds)
-      .select('id', { count: 'exact', head: true });
+      .in('id', notificationIds);
 
     if (updateError) {
       console.error('Lỗi cập nhật notifications:', updateError);

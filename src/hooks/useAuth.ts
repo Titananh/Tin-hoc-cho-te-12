@@ -1,78 +1,77 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-
-interface AuthUser {
-  id: string;
-  email: string;
-  name: string;
-}
+import { useState, useEffect, useCallback } from 'react';
+import {
+  getCurrentUser,
+  login as clientLogin,
+  logout as clientLogout,
+  type User as ClientUser,
+} from '@/lib/client-auth';
 
 interface UseAuthReturn {
-  user: AuthUser | null;
+  user: ClientUser | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
   logout: () => Promise<void>;
+  refresh: () => void;
 }
 
+/**
+ * Hook xác thực phía client.
+ * Đọc/ghi trạng thái đăng nhập trong localStorage thông qua lib/client-auth.
+ */
 export function useAuth(): UseAuthReturn {
-  const [user, setUser] = useState<AuthUser | null>(null);
+  const [user, setUser] = useState<ClientUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    // Check for existing auth session
-    const checkAuth = async () => {
-      try {
-        // Placeholder: Check localStorage or session
-        const storedUser = localStorage.getItem('user');
-        if (storedUser) {
-          setUser(JSON.parse(storedUser));
-        }
-      } catch (error) {
-        console.error('Auth check failed:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    checkAuth();
+  const refresh = useCallback(() => {
+    setUser(getCurrentUser());
   }, []);
 
-  const login = async (email: string, password: string) => {
-    // Placeholder login implementation
-    setIsLoading(true);
-    try {
-      // TODO: Implement actual login API call
-      const mockUser: AuthUser = { id: '1', email, name: 'User' };
-      localStorage.setItem('user', JSON.stringify(mockUser));
-      setUser(mockUser);
-    } catch (error) {
-      console.error('Login failed:', error);
-      throw error;
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  useEffect(() => {
+    setUser(getCurrentUser());
+    setIsLoading(false);
 
-  const logout = async () => {
+    // Sync between tabs
+    function onStorage(e: StorageEvent) {
+      if (e.key === 'python_master_auth') {
+        setUser(getCurrentUser());
+      }
+    }
+    window.addEventListener('storage', onStorage);
+    return () => window.removeEventListener('storage', onStorage);
+  }, []);
+
+  const login = useCallback(async (email: string, password: string) => {
     setIsLoading(true);
     try {
-      localStorage.removeItem('user');
-      setUser(null);
-    } catch (error) {
-      console.error('Logout failed:', error);
-      throw error;
+      const result = clientLogin(email, password);
+      if (result.success) {
+        setUser(getCurrentUser());
+      }
+      return result;
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
+
+  const logout = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      clientLogout();
+      setUser(null);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
   return {
     user,
-    isAuthenticated: !!user,
+    isAuthenticated: user !== null,
     isLoading,
     login,
     logout,
+    refresh,
   };
 }

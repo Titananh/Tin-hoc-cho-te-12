@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { getCurrentUser, logout, type User } from '@/lib/client-auth';
+import { getCurrentUser, logout, type User as ClientUser } from '@/lib/client-auth';
 import { useState, useEffect, useRef } from 'react';
 import {
   GraduationCap,
@@ -42,7 +42,7 @@ const NAV_ITEMS: NavItem[] = [
 
 export default function Navbar() {
   const pathname = usePathname();
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<ClientUser | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);

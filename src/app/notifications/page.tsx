@@ -129,7 +129,36 @@ export default function NotificationsPage() {
           ) : (
             filtered.map((n, i) => {
               const Icon = TYPE_ICON[n.type];
-              const Wrapper = n.href ? Link : 'div';
+              const cardClass = `flex gap-3 p-4 bg-white dark:bg-slate-800 rounded-xl border transition-shadow hover:shadow-md cursor-pointer ${
+                n.read
+                  ? 'border-slate-200 dark:border-slate-700'
+                  : 'border-blue-200 dark:border-blue-900/40 ring-1 ring-blue-100 dark:ring-blue-900/20'
+              }`;
+              const inner = (
+                <>
+                  <div
+                    className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${
+                      TYPE_COLOR[n.type]
+                    }`}
+                  >
+                    <Icon className="w-5 h-5" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between gap-2">
+                      <h3 className="font-semibold text-slate-900 dark:text-white">
+                        {n.title}
+                      </h3>
+                      {!n.read && (
+                        <span className="w-2 h-2 rounded-full bg-blue-500 flex-shrink-0" />
+                      )}
+                    </div>
+                    <p className="text-sm text-slate-600 dark:text-slate-300 mt-0.5">
+                      {n.message}
+                    </p>
+                    <p className="text-xs text-slate-400 mt-1">{timeAgo(n.createdAt)}</p>
+                  </div>
+                </>
+              );
               return (
                 <motion.div
                   key={n.id}
@@ -137,37 +166,19 @@ export default function NotificationsPage() {
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: i * 0.04 }}
                 >
-                  <Wrapper
-                    {...(n.href ? { href: n.href } : {})}
-                    onClick={() => markRead(n.id)}
-                    className={`flex gap-3 p-4 bg-white dark:bg-slate-800 rounded-xl border transition-shadow hover:shadow-md cursor-pointer ${
-                      n.read
-                        ? 'border-slate-200 dark:border-slate-700'
-                        : 'border-blue-200 dark:border-blue-900/40 ring-1 ring-blue-100 dark:ring-blue-900/20'
-                    }`}
-                  >
-                    <div
-                      className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                        TYPE_COLOR[n.type]
-                      }`}
+                  {n.href ? (
+                    <Link
+                      href={n.href}
+                      onClick={() => markRead(n.id)}
+                      className={cardClass}
                     >
-                      <Icon className="w-5 h-5" />
+                      {inner}
+                    </Link>
+                  ) : (
+                    <div onClick={() => markRead(n.id)} className={cardClass}>
+                      {inner}
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between gap-2">
-                        <h3 className="font-semibold text-slate-900 dark:text-white">
-                          {n.title}
-                        </h3>
-                        {!n.read && (
-                          <span className="w-2 h-2 rounded-full bg-blue-500 flex-shrink-0" />
-                        )}
-                      </div>
-                      <p className="text-sm text-slate-600 dark:text-slate-300 mt-0.5">
-                        {n.message}
-                      </p>
-                      <p className="text-xs text-slate-400 mt-1">{timeAgo(n.createdAt)}</p>
-                    </div>
-                  </Wrapper>
+                  )}
                 </motion.div>
               );
             })

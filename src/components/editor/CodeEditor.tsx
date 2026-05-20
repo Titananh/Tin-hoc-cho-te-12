@@ -140,7 +140,8 @@ function CodeEditor({
 
       // Register Python auto-completion provider
       monaco.languages.registerCompletionItemProvider('python', {
-        provideCompletionItems: (model, position) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        provideCompletionItems: (model: any, position: any) => {
           const word = model.getWordUntilPosition(position);
           const range = {
             startLineNumber: position.lineNumber,
