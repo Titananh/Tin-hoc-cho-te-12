@@ -412,13 +412,13 @@ function ProblemView({ problem }: { problem: Problem }) {
           </div>
 
           {/* Editor Body */}
-          <div className="min-h-[400px] lg:min-h-[450px] flex-1 overflow-hidden">
+          <div className="overflow-hidden">
             <CodeEditor
               value={code}
               onChange={setCode}
               language="python"
               theme="dark"
-              height="100%"
+              height="450px"
               onRun={runCode}
             />
           </div>
