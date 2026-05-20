@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Mail, Lock, Eye, EyeOff, Code2, AlertCircle, Loader2, User, CheckCircle2 } from 'lucide-react';
 import Link from 'next/link';
-import { register } from '@/lib/client-auth';
+import { signUpEmail, signInGoogle } from '@/lib/auth-supabase';
 
 interface ValidationErrors {
   name?: string;
@@ -75,7 +75,7 @@ export default function RegisterPage() {
     setIsLoading(true);
 
     try {
-      const result = register(name, email, password);
+      const result = await signUpEmail(name, email, password);
       if (result.success) {
         router.push('/dashboard');
       } else {
@@ -91,9 +91,16 @@ export default function RegisterPage() {
   const handleGoogleSignIn = async () => {
     setIsGoogleLoading(true);
     setError(null);
-    // Google sign-in not available in localStorage mode
-    setError('Đăng ký Google không khả dụng. Vui lòng dùng email/mật khẩu.');
-    setIsGoogleLoading(false);
+    try {
+      const result = await signInGoogle();
+      if (!result.success) {
+        setError(result.error || 'Đăng ký Google thất bại');
+        setIsGoogleLoading(false);
+      }
+    } catch {
+      setError('Đã xảy ra lỗi. Vui lòng thử lại sau.');
+      setIsGoogleLoading(false);
+    }
   };
 
   return (

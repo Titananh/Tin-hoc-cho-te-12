@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Mail, Lock, Eye, EyeOff, Code2, AlertCircle, Loader2 } from 'lucide-react';
 import Link from 'next/link';
-import { login } from '@/lib/client-auth';
+import { signInEmail, signInGoogle } from '@/lib/auth-supabase';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -20,7 +20,7 @@ export default function LoginPage() {
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [error, setError] = useState<string | null>(
     errorParam === 'OAuthAccountNotLinked'
-      ? 'Email này đã được đăng ký bằng phương thức khác. Vui lòng đăng nhập bằng email/mật khẩu.'
+      ? 'Email này đã được đăng ký bằng phương thức khác.'
       : errorParam === 'OAuthCallback'
         ? 'Đăng nhập Google thất bại. Vui lòng thử lại.'
         : null
@@ -32,7 +32,7 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-      const result = login(email, password);
+      const result = await signInEmail(email, password);
       if (result.success) {
         router.push(callbackUrl);
       } else {
@@ -48,9 +48,17 @@ export default function LoginPage() {
   const handleGoogleSignIn = async () => {
     setIsGoogleLoading(true);
     setError(null);
-    // Google sign-in not available in localStorage mode
-    setError('Đăng nhập Google không khả dụng. Vui lòng dùng email/mật khẩu.');
-    setIsGoogleLoading(false);
+    try {
+      const result = await signInGoogle();
+      if (!result.success) {
+        setError(result.error || 'Đăng nhập Google thất bại');
+        setIsGoogleLoading(false);
+      }
+      // If success, page will redirect to Google OAuth
+    } catch {
+      setError('Đã xảy ra lỗi. Vui lòng thử lại sau.');
+      setIsGoogleLoading(false);
+    }
   };
 
   return (

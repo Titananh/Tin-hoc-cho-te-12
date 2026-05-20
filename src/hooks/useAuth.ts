@@ -3,52 +3,73 @@
 import { useState, useEffect, useCallback } from 'react';
 import {
   getCurrentUser,
-  login as clientLogin,
-  logout as clientLogout,
-  type User as ClientUser,
-} from '@/lib/client-auth';
+  signInEmail,
+  signUpEmail,
+  signInGoogle,
+  signOut,
+  onAuthStateChange,
+  type AuthUser,
+} from '@/lib/auth-supabase';
+import { downloadProgress, scheduleSync } from '@/lib/progress-sync';
 
 interface UseAuthReturn {
-  user: ClientUser | null;
+  user: AuthUser | null;
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
+  register: (name: string, email: string, password: string) => Promise<{ success: boolean; error?: string }>;
+  loginGoogle: () => Promise<{ success: boolean; error?: string }>;
   logout: () => Promise<void>;
-  refresh: () => void;
+  syncProgress: () => void;
 }
 
 /**
- * Hook xác thực phía client.
- * Đọc/ghi trạng thái đăng nhập trong localStorage thông qua lib/client-auth.
+ * Hook xác thực + đồng bộ tiến trình.
+ * Dùng Supabase Auth khi có credentials, fallback localStorage khi không.
  */
 export function useAuth(): UseAuthReturn {
-  const [user, setUser] = useState<ClientUser | null>(null);
+  const [user, setUser] = useState<AuthUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const refresh = useCallback(() => {
-    setUser(getCurrentUser());
-  }, []);
-
   useEffect(() => {
-    setUser(getCurrentUser());
-    setIsLoading(false);
+    let mounted = true;
 
-    // Sync between tabs
-    function onStorage(e: StorageEvent) {
-      if (e.key === 'python_master_auth') {
-        setUser(getCurrentUser());
+    // Initial load
+    getCurrentUser().then((u) => {
+      if (mounted) {
+        setUser(u);
+        setIsLoading(false);
+        // Download remote progress on login
+        if (u) {
+          downloadProgress(u.id);
+        }
       }
-    }
-    window.addEventListener('storage', onStorage);
-    return () => window.removeEventListener('storage', onStorage);
+    });
+
+    // Listen for auth changes (login/logout from other tabs, OAuth redirect)
+    const unsubscribe = onAuthStateChange((u) => {
+      if (mounted) {
+        setUser(u);
+        if (u) {
+          downloadProgress(u.id);
+        }
+      }
+    });
+
+    return () => {
+      mounted = false;
+      unsubscribe();
+    };
   }, []);
 
   const login = useCallback(async (email: string, password: string) => {
     setIsLoading(true);
     try {
-      const result = clientLogin(email, password);
+      const result = await signInEmail(email, password);
       if (result.success) {
-        setUser(getCurrentUser());
+        const u = await getCurrentUser();
+        setUser(u);
+        if (u) downloadProgress(u.id);
       }
       return result;
     } finally {
@@ -56,22 +77,48 @@ export function useAuth(): UseAuthReturn {
     }
   }, []);
 
-  const logout = useCallback(async () => {
+  const register = useCallback(async (name: string, email: string, password: string) => {
     setIsLoading(true);
     try {
-      clientLogout();
-      setUser(null);
+      const result = await signUpEmail(name, email, password);
+      if (result.success) {
+        const u = await getCurrentUser();
+        setUser(u);
+      }
+      return result;
     } finally {
       setIsLoading(false);
     }
   }, []);
+
+  const loginGoogle = useCallback(async () => {
+    return signInGoogle();
+  }, []);
+
+  const logout = useCallback(async () => {
+    // Upload progress before logout
+    if (user) {
+      const { uploadProgress } = await import('@/lib/progress-sync');
+      await uploadProgress(user.id);
+    }
+    await signOut();
+    setUser(null);
+  }, [user]);
+
+  const syncProgress = useCallback(() => {
+    if (user) {
+      scheduleSync(user.id);
+    }
+  }, [user]);
 
   return {
     user,
     isAuthenticated: user !== null,
     isLoading,
     login,
+    register,
+    loginGoogle,
     logout,
-    refresh,
+    syncProgress,
   };
 }

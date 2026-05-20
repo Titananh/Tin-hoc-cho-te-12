@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { getCurrentUser, logout, type User as ClientUser } from '@/lib/client-auth';
+import { getCurrentUser, signOut, type AuthUser } from '@/lib/auth-supabase';
 import { useState, useEffect, useRef } from 'react';
 import {
   GraduationCap,
@@ -42,13 +42,13 @@ const NAV_ITEMS: NavItem[] = [
 
 export default function Navbar() {
   const pathname = usePathname();
-  const [user, setUser] = useState<ClientUser | null>(null);
+  const [user, setUser] = useState<AuthUser | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    setUser(getCurrentUser());
+    getCurrentUser().then(setUser);
   }, [pathname]);
 
   useEffect(() => {
@@ -174,7 +174,7 @@ export default function Navbar() {
                         Cài đặt
                       </Link>
                       <button
-                        onClick={() => { logout(); window.location.href = '/'; }}
+                        onClick={() => { signOut(); window.location.href = '/'; }}
                         className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20"
                       >
                         <LogOut className="w-4 h-4" />

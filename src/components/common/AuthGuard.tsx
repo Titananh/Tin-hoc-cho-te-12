@@ -2,24 +2,23 @@
 
 import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import { getCurrentUser, type User } from '@/lib/client-auth';
+import { getCurrentUser, type AuthUser } from '@/lib/auth-supabase';
 
 const PUBLIC_PATHS = ['/', '/login', '/register', '/about', '/faq', '/terms', '/privacy'];
 
 export function AuthGuard({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
-  const [user, setUser] = useState<User | null | undefined>(undefined);
+  const [user, setUser] = useState<AuthUser | null | undefined>(undefined);
 
   useEffect(() => {
-    const u = getCurrentUser();
-    setUser(u);
-    
-    // If not authenticated and not on public page, redirect to login
-    const isPublic = PUBLIC_PATHS.some(p => pathname === p || pathname?.startsWith('/forgot'));
-    if (!u && !isPublic) {
-      router.push('/login');
-    }
+    getCurrentUser().then((u) => {
+      setUser(u);
+      const isPublic = PUBLIC_PATHS.some(p => pathname === p || pathname?.startsWith('/forgot') || pathname?.startsWith('/reset'));
+      if (!u && !isPublic) {
+        router.push('/login');
+      }
+    });
   }, [pathname, router]);
 
   // Loading state
@@ -32,7 +31,7 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
   }
 
   // Public pages always render
-  const isPublic = PUBLIC_PATHS.some(p => pathname === p || pathname?.startsWith('/forgot'));
+  const isPublic = PUBLIC_PATHS.some(p => pathname === p || pathname?.startsWith('/forgot') || pathname?.startsWith('/reset'));
   if (isPublic) return <>{children}</>;
 
   // Protected pages need auth
