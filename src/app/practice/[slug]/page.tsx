@@ -16,6 +16,7 @@ import type { Problem } from '@/lib/problem-bank';
 import { recordProblemSolved } from '@/lib/gamification-store';
 import { markProblemSolved } from '@/lib/solved-tracker';
 import { useToast } from '@/components/common/Toast';
+import CodeEditor from '@/components/editor/CodeEditor';
 
 // ─── Merge all problem banks into a slug-based lookup ───
 const ALL_PROBLEMS: Record<string, Problem> = {};
@@ -269,6 +270,7 @@ function ProblemView({ problem }: { problem: Problem }) {
   }, [code, py, problem.testCases]);
 
   const lineCount = code.split('\n').length;
+  void lineCount;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950">
@@ -304,9 +306,25 @@ function ProblemView({ problem }: { problem: Problem }) {
           {/* Description */}
           <div className="prose prose-sm prose-invert max-w-none">
             <h3 className="text-slate-200 text-base font-semibold flex items-center gap-2 mb-3">
-              <BookOpen className="w-4 h-4 text-blue-400" /> Mô tả
+              <BookOpen className="w-4 h-4 text-blue-400" /> Đề bài
             </h3>
-            <p className="text-slate-300 whitespace-pre-line leading-relaxed">{problem.description}</p>
+            <div className="text-slate-300 leading-relaxed space-y-2 [&_code]:bg-slate-800 [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded [&_code]:text-amber-300 [&_code]:text-[13px] [&_code]:font-mono">
+              {problem.description.split(/\n\n+/).map((para, idx) => {
+                // Detect bullet list
+                if (para.match(/^[-•*]\s/m)) {
+                  return (
+                    <ul key={idx} className="list-disc pl-5 space-y-1 marker:text-blue-400">
+                      {para.split('\n').map((line, j) => {
+                        const text = line.replace(/^[-•*]\s+/, '');
+                        if (!text.trim()) return null;
+                        return <li key={j} dangerouslySetInnerHTML={{ __html: text.replace(/`([^`]+)`/g, '<code>$1</code>') }} />;
+                      })}
+                    </ul>
+                  );
+                }
+                return <p key={idx} dangerouslySetInnerHTML={{ __html: para.replace(/\n/g, '<br/>').replace(/`([^`]+)`/g, '<code>$1</code>') }} />;
+              })}
+            </div>
           </div>
 
           {/* Examples / Test Cases */}
@@ -394,13 +412,15 @@ function ProblemView({ problem }: { problem: Problem }) {
           </div>
 
           {/* Editor Body */}
-          <div className="flex flex-1 min-h-0 overflow-hidden">
-            <LineNumbers count={lineCount} />
-            <div className="relative flex-1">
-              {/* Textarea */}
-              <textarea value={code} onChange={(e) => setCode(e.target.value)} spellCheck={false}
-                className="relative w-full h-full min-h-[280px] p-4 bg-transparent text-slate-100 font-mono text-sm leading-[1.625rem] focus:outline-none resize-none caret-white" />
-            </div>
+          <div className="min-h-[400px] lg:min-h-[450px] flex-1 overflow-hidden">
+            <CodeEditor
+              value={code}
+              onChange={setCode}
+              language="python"
+              theme="dark"
+              height="100%"
+              onRun={runCode}
+            />
           </div>
 
           {/* Custom Input (stdin) */}
