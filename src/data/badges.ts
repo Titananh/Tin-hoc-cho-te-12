@@ -209,40 +209,15 @@ export interface UserAchievement {
   target: number;
 }
 
-export const userAchievements: Record<string, UserAchievement> = {
-  'badge-first-lesson': { badge_id: 'badge-first-lesson', earned_at: '2026-04-15', progress: 1, target: 1 },
-  'badge-10-lessons': { badge_id: 'badge-10-lessons', earned_at: '2026-05-01', progress: 10, target: 10 },
-  'badge-streak-7': { badge_id: 'badge-streak-7', earned_at: '2026-04-20', progress: 7, target: 7 },
-  'badge-streak-14': { badge_id: 'badge-streak-14', earned_at: '2026-05-10', progress: 14, target: 14 },
-  'badge-first-problem': { badge_id: 'badge-first-problem', earned_at: '2026-04-18', progress: 1, target: 1 },
-  'badge-10-problems': { badge_id: 'badge-10-problems', earned_at: '2026-05-05', progress: 10, target: 10 },
-  'badge-first-project': { badge_id: 'badge-first-project', earned_at: '2026-05-12', progress: 1, target: 1 },
-  'badge-first-friend': { badge_id: 'badge-first-friend', earned_at: null, progress: 0, target: 1 },
-  'badge-50-lessons': { badge_id: 'badge-50-lessons', earned_at: null, progress: 42, target: 50 },
-  'badge-streak-30': { badge_id: 'badge-streak-30', earned_at: null, progress: 22, target: 30 },
-  'badge-50-problems': { badge_id: 'badge-50-problems', earned_at: null, progress: 38, target: 50 },
-};
+export const userAchievements: Record<string, UserAchievement> = {};
 
 export const userStats = {
-  totalAchievementsUnlocked: 7,
-  currentStreak: 22,
-  longestStreak: 45,
-  totalXP: 2850,
+  totalAchievementsUnlocked: 0,
+  currentStreak: 0,
+  longestStreak: 0,
+  totalXP: 0,
 };
 
-export const recentAchievements = [
-  { badge_id: 'badge-first-project', earned_at: '2026-05-12', icon: '🏗️', name: 'Nhà xây dựng' },
-  { badge_id: 'badge-10-problems', earned_at: '2026-05-05', icon: '🔧', name: 'Người giải quyết vấn đề' },
-  { badge_id: 'badge-streak-14', earned_at: '2026-05-10', icon: '🌟', name: 'Nửa tháng kiên trì' },
-  { badge_id: 'badge-10-lessons', earned_at: '2026-05-01', icon: '📚', name: 'Người học chăm chỉ' },
-];
+export const recentAchievements: Array<{ badge_id: string; earned_at: string; icon: string; name: string }> = [];
 
-export const milestoneTimeline = [
-  { date: '2026-03-01', label: 'Bắt đầu hành trình', type: 'start' },
-  { date: '2026-04-15', label: 'Bài học đầu tiên', type: 'milestone' },
-  { date: '2026-04-18', label: 'Bài toán đầu tiên', type: 'milestone' },
-  { date: '2026-04-20', label: '7 ngày streak', type: 'milestone' },
-  { date: '2026-05-01', label: '10 bài học', type: 'milestone' },
-  { date: '2026-05-10', label: '14 ngày streak', type: 'milestone' },
-  { date: '2026-05-12', label: 'Dự án đầu tiên', type: 'milestone' },
-];
+export const milestoneTimeline: Array<{ date: string; label: string; type: string }> = [];

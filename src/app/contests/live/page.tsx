@@ -100,19 +100,8 @@ const CONTEST_PROBLEMS: Problem[] = [
 ];
 
 
-// Fake leaderboard data
-const FAKE_LEADERBOARD = [
-  { name: 'NguyenVanA', score: 700, time: '78:23' },
-  { name: 'TranThiB', score: 600, time: '65:10' },
-  { name: 'LeVanC', score: 500, time: '82:45' },
-  { name: 'PhamDucD', score: 500, time: '85:00' },
-  { name: 'HoangE', score: 400, time: '70:30' },
-  { name: 'VuThiF', score: 300, time: '55:20' },
-  { name: 'DangVanG', score: 300, time: '60:15' },
-  { name: 'BuiH', score: 200, time: '45:00' },
-  { name: 'DoThiI', score: 100, time: '30:50' },
-  { name: 'NgocK', score: 100, time: '88:00' },
-];
+// Contest leaderboard - starts empty, populated as users complete problems
+const FAKE_LEADERBOARD: Array<{ name: string; score: number; time: string }> = [];
 
 const CONTEST_DURATION = 90 * 60; // 90 minutes in seconds
 const STORAGE_KEY = 'contest_live_state';

@@ -40,11 +40,7 @@ const TYPE_COLOR = {
 };
 
 const SEED: Notification[] = [
-  { id: 1, type: 'lesson', title: 'Chào mừng bạn!', message: 'Bắt đầu bài học đầu tiên ngay để nhận 50 XP và huy hiệu "Người mới bắt đầu".', createdAt: 'Vừa xong', read: false, href: '/learn/1/lessons/1' },
-  { id: 2, type: 'contest', title: 'Cuộc thi mới: Thi Tin học 12 - Tháng 5/2026', message: 'Đăng ký ngay để giữ chỗ. Bắt đầu lúc 19:00 ngày 25/5.', createdAt: '1 giờ trước', read: false, href: '/contests' },
-  { id: 3, type: 'streak', title: 'Đừng để mất streak!', message: 'Hoàn thành 1 bài tập hôm nay để giữ streak.', createdAt: '3 giờ trước', read: false, href: '/challenge' },
-  { id: 4, type: 'badge', title: 'Huy hiệu mới đã sẵn sàng', message: 'Hoàn thành 10 bài tập để nhận huy hiệu "Học viên chăm chỉ".', createdAt: 'Hôm qua', read: true, href: '/achievements' },
-  { id: 5, type: 'level', title: 'Sẵn sàng lên Cấp 2', message: 'Bạn còn 1 bài tập nữa là lên Cấp 2.', createdAt: '2 ngày trước', read: true, href: '/learn' },
+  { id: 1, type: 'lesson', title: 'Chào mừng bạn!', message: 'Bắt đầu bài học đầu tiên ngay để nhận XP và huy hiệu "Người mới bắt đầu".', createdAt: 'Vừa xong', read: false, href: '/learn/1' },
 ];
 
 function timeAgo(s: string): string {
