@@ -31,13 +31,14 @@ const DIFFICULTY_COLOR = {
   hard: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300',
 };
 
-// Generate calendar of last 30 days with synthetic challenges (deterministic)
-function buildCalendar(seed = 42): DailyChallenge[] {
+// Generate calendar of last 30 days with challenges.
+// `completed` is determined by checking if the user actually solved that problem.
+function buildCalendar(solvedSlugs: Set<string>): DailyChallenge[] {
   const challenges: Array<Omit<DailyChallenge, 'date' | 'completed'>> = [
-    { title: 'Tổng 2 số', description: 'In ra tổng 2 số nguyên', difficulty: 'easy', xp: 10, problemSlug: 'tinh-tong-2-so' },
+    { title: 'Tổng 2 số', description: 'In ra tổng 2 số nguyên', difficulty: 'easy', xp: 10, problemSlug: 'tinh-tong-hai-so' },
     { title: 'Chẵn lẻ', description: 'Kiểm tra số chẵn hay lẻ', difficulty: 'easy', xp: 10, problemSlug: 'kiem-tra-chan-le' },
     { title: 'Số nguyên tố', description: 'Kiểm tra số nguyên tố', difficulty: 'easy', xp: 20, problemSlug: 'kiem-tra-so-nguyen-to' },
-    { title: 'Fibonacci', description: 'In số Fibonacci thứ N', difficulty: 'medium', xp: 30, problemSlug: 'fibonacci' },
+    { title: 'Fibonacci', description: 'In số Fibonacci thứ N', difficulty: 'medium', xp: 30, problemSlug: 'day-fibonacci' },
     { title: 'Bảng cửu chương', description: 'In bảng cửu chương N', difficulty: 'easy', xp: 15, problemSlug: 'in-bang-cuu-chuong' },
     { title: 'GCD', description: 'Tìm ước chung lớn nhất', difficulty: 'easy', xp: 15, problemSlug: 'tim-uoc-chung-lon-nhat' },
     { title: 'Đảo chuỗi', description: 'Đảo ngược chuỗi', difficulty: 'easy', xp: 15, problemSlug: 'dao-nguoc-chuoi' },
@@ -49,8 +50,8 @@ function buildCalendar(seed = 42): DailyChallenge[] {
     const d = new Date(today);
     d.setDate(d.getDate() - i);
     const ch = challenges[i % challenges.length];
-    // Deterministic pseudo-random: every 3rd past day completed, none today/recent
-    const completed = i > 5 && (i + seed) % 3 !== 0;
+    // Only mark completed if user actually solved this problem
+    const completed = solvedSlugs.has(ch.problemSlug);
     result.push({
       date: d.toISOString().split('T')[0],
       ...ch,
@@ -61,7 +62,17 @@ function buildCalendar(seed = 42): DailyChallenge[] {
 }
 
 export default function ChallengePage() {
-  const [calendar] = useState<DailyChallenge[]>(() => buildCalendar());
+  const [calendar] = useState<DailyChallenge[]>(() => {
+    // Import solved problems from localStorage
+    let solvedSlugs = new Set<string>();
+    if (typeof window !== 'undefined') {
+      try {
+        const data = localStorage.getItem('python_master_solved');
+        if (data) solvedSlugs = new Set(JSON.parse(data));
+      } catch { /* empty */ }
+    }
+    return buildCalendar(solvedSlugs);
+  });
   const today = new Date().toISOString().split('T')[0];
 
   const todayChallenge = calendar[calendar.length - 1];
