@@ -49,67 +49,172 @@ const L = (
 export const LESSONS: LessonContent[] = [
   // ─── CẤP 1: GIỚI THIỆU PYTHON ─────────────────────────────────────────────
   L(1, 1, 1, 'Bài 1: Python là gì?', 'Tổng quan về Python và môi trường lập trình', 'easy', `
-## Mục tiêu
+## 🎯 Mục tiêu bài học
 Sau bài học này, bạn sẽ:
-- Biết Python là gì và vì sao SGK Cánh Diều chọn Python
-- Cài đặt được trình thông dịch và editor (hoặc dùng trực tiếp trên web)
-- Chạy được chương trình "Hello, World!" đầu tiên
+- Hiểu Python là gì và vì sao nó phổ biến nhất thế giới
+- Biết cách chạy code Python ngay trên trình duyệt
+- Viết được chương trình đầu tiên
 
-## Python là gì?
-Python là **ngôn ngữ lập trình bậc cao**, ra đời năm 1991 bởi Guido van Rossum. Đặc điểm nổi bật:
-- Cú pháp gần với tiếng Anh, dễ đọc dễ học
-- Thư viện chuẩn rất phong phú
-- Cộng đồng đông đảo, tài liệu đầy đủ
-- Dùng trong AI, web, data science, tự động hoá...
+---
 
-## Chương trình đầu tiên
-\`\`\`python
-print("Xin chào lớp 12!")
+## 🐍 Python là gì?
+
+Python là **ngôn ngữ lập trình bậc cao** do Guido van Rossum tạo ra năm 1991. Hiện tại Python đứng **#1 thế giới** về độ phổ biến (theo TIOBE Index 2026).
+
+### Tại sao chọn Python?
+
+| Đặc điểm | Giải thích |
+|-----------|-----------|
+| 📖 Dễ đọc | Cú pháp gần tiếng Anh, không cần dấu \`;\` hay \`{}\` |
+| 🚀 Đa năng | Web, AI, Data Science, Game, IoT... |
+| 📚 Thư viện khổng lồ | 400,000+ packages trên PyPI |
+| 👥 Cộng đồng lớn | Stack Overflow, GitHub, Reddit |
+| 💼 Việc làm nhiều | Google, Netflix, Instagram đều dùng Python |
+
+### Python dùng ở đâu trong thực tế?
+
+\`\`\`
+🤖 AI/Machine Learning  → ChatGPT, xe tự lái
+📊 Data Science         → Phân tích dữ liệu, biểu đồ
+🌐 Web Development      → Instagram, Spotify backend
+🎮 Game                 → Pygame, Ren'Py
+🔬 Khoa học             → NASA, nghiên cứu y học
 \`\`\`
 
-Lệnh \`print()\` dùng để **in giá trị ra màn hình**. Thử thay đổi nội dung trong dấu ngoặc kép để in tên của bạn.
+---
 
-## Lưu ý
-- Python phân biệt chữ hoa chữ thường: \`Print\` khác \`print\`
-- Mỗi câu lệnh thường viết trên 1 dòng riêng
+## 💻 Chương trình đầu tiên
 
-## Bài tập tự luyện
-1. In ra "Tôi đang học Python"
-2. In tên đầy đủ và lớp của bạn ra 2 dòng riêng
+\`\`\`python
+# Chương trình Python đầu tiên của bạn!
+print("Xin chào lớp 12!")
+print("Tôi đang học Python 🐍")
+\`\`\`
+
+**Giải thích từng dòng:**
+- \`#\` → Dòng ghi chú (comment), Python bỏ qua
+- \`print()\` → Hàm in giá trị ra màn hình
+- \`"..."\` → Chuỗi ký tự (string)
+
+> 🧪 **Thử ngay:** Nhấn nút "Bắt đầu" ở bài tập bên dưới, thay \`"Xin chào lớp 12!"\` bằng tên của bạn rồi chạy!
+
+---
+
+## ⚠️ Lỗi thường gặp
+
+| Lỗi | Nguyên nhân | Cách sửa |
+|-----|-------------|----------|
+| \`NameError: name 'Print' is not defined\` | Viết hoa chữ P | Đổi thành \`print\` (chữ thường) |
+| \`SyntaxError: EOL while scanning\` | Thiếu dấu ngoặc kép đóng | Thêm \`"\` ở cuối chuỗi |
+| \`SyntaxError: unexpected indent\` | Thụt lề sai | Xóa khoảng trắng đầu dòng |
+
+---
+
+## 💡 Mẹo hay
+- Python phân biệt **chữ hoa/thường**: \`Print\` ≠ \`print\`
+- Mỗi câu lệnh viết trên **1 dòng riêng**
+- Dùng \`#\` để ghi chú giải thích code cho người đọc
+
+---
+
+## ✏️ Bài tập tự luyện
+1. In ra dòng chữ \`"Tôi đang học Python"\`
+2. In tên đầy đủ và lớp của bạn ra **2 dòng riêng**
+3. Thử viết \`Print("test")\` xem lỗi gì xảy ra, rồi sửa lại
 `),
   L(2, 1, 2, 'Bài 2: Biến và kiểu dữ liệu cơ bản', 'Khai báo biến, các kiểu int/float/str/bool', 'easy', `
-## Biến trong Python
-**Biến** là tên đại diện cho một giá trị trong bộ nhớ. Cú pháp:
-\`\`\`python
-ten = "An"          # str
-tuoi = 17           # int
-diem = 8.5          # float
-da_dang_ki = True   # bool
+## 🎯 Mục tiêu bài học
+- Hiểu khái niệm **biến** (variable) trong lập trình
+- Phân biệt 4 kiểu dữ liệu cơ bản: \`int\`, \`float\`, \`str\`, \`bool\`
+- Sử dụng hàm \`type()\` để kiểm tra kiểu
+
+---
+
+## 📦 Biến là gì?
+
+Hãy tưởng tượng biến như một **chiếc hộp có tên**, bên trong chứa một giá trị:
+
+\`\`\`
+┌─────────────┐    ┌─────────────┐    ┌─────────────┐
+│  ten = "An" │    │  tuoi = 17  │    │ diem = 8.5  │
+│  ┌───────┐  │    │  ┌───────┐  │    │  ┌───────┐  │
+│  │ "An"  │  │    │  │  17   │  │    │  │  8.5  │  │
+│  └───────┘  │    │  └───────┘  │    │  └───────┘  │
+│    (str)    │    │    (int)    │    │   (float)   │
+└─────────────┘    └─────────────┘    └─────────────┘
 \`\`\`
 
-## Các kiểu dữ liệu cơ bản
-| Kiểu | Ví dụ | Mô tả |
-|------|------|------|
-| int | 17, -5, 0 | Số nguyên |
-| float | 3.14, -2.5 | Số thực |
-| str | "Hà Nội" | Chuỗi ký tự |
-| bool | True, False | Logic |
+### Cú pháp khai báo biến:
+\`\`\`python
+ten = "An"          # Chuỗi (str)
+tuoi = 17           # Số nguyên (int)
+diem = 8.5          # Số thực (float)
+da_dang_ki = True   # Logic (bool)
+\`\`\`
 
-## Hàm \`type()\` và \`print()\`
+> ⚡ **Khác với Toán:** Dấu \`=\` trong Python là **gán giá trị**, không phải "bằng". \`x = 5\` nghĩa là "đặt giá trị 5 vào hộp x".
+
+---
+
+## 📊 4 Kiểu dữ liệu cơ bản
+
+| Kiểu | Ý nghĩa | Ví dụ | Khi nào dùng? |
+|------|---------|-------|---------------|
+| \`int\` | Số nguyên | \`17\`, \`-5\`, \`0\`, \`1000\` | Đếm, chỉ số, tuổi |
+| \`float\` | Số thực | \`3.14\`, \`-2.5\`, \`9.0\` | Điểm số, tiền, đo lường |
+| \`str\` | Chuỗi ký tự | \`"Hà Nội"\`, \`'Python'\` | Tên, địa chỉ, văn bản |
+| \`bool\` | Đúng/Sai | \`True\`, \`False\` | Điều kiện, trạng thái |
+
+---
+
+## 🔍 Kiểm tra kiểu với \`type()\`
+
 \`\`\`python
 x = 10
+y = 3.14
+z = "Hello"
+w = True
+
 print(type(x))   # <class 'int'>
-print(x)         # 10
+print(type(y))   # <class 'float'>
+print(type(z))   # <class 'str'>
+print(type(w))   # <class 'bool'>
 \`\`\`
 
-## Quy tắc đặt tên biến
-- Bắt đầu bằng chữ cái hoặc dấu gạch dưới
-- Không chứa dấu cách hay ký tự đặc biệt
-- Không trùng từ khoá Python (if, for, ...)
+> 🧪 **Thử ngay:** Gõ \`print(type(3.14))\` và \`print(type("3.14"))\` — kết quả khác nhau!
 
-## Bài tập tự luyện
-1. Khai báo 3 biến \`ho_ten\`, \`lop\`, \`diem\` rồi in ra
-2. Dùng \`type()\` xem kiểu của \`3.14\` và \`"3.14"\`
+---
+
+## 📝 Quy tắc đặt tên biến
+
+✅ **Được phép:**
+- Bắt đầu bằng chữ cái hoặc \`_\`: \`ten\`, \`_count\`, \`diem_tb\`
+- Chứa chữ, số, gạch dưới: \`hoc_sinh_1\`, \`x2\`
+
+❌ **Không được:**
+- Bắt đầu bằng số: ~~\`1x\`~~, ~~\`2diem\`~~
+- Chứa dấu cách: ~~\`ho ten\`~~ → dùng \`ho_ten\`
+- Trùng từ khóa: ~~\`if\`~~, ~~\`for\`~~, ~~\`print\`~~
+
+---
+
+## ⚠️ Lỗi thường gặp
+
+\`\`\`python
+# ❌ Sai: chưa khai báo biến
+print(ten)  # NameError: name 'ten' is not defined
+
+# ✅ Đúng: khai báo trước, dùng sau
+ten = "An"
+print(ten)  # An
+\`\`\`
+
+---
+
+## ✏️ Bài tập tự luyện
+1. Khai báo 3 biến \`ho_ten\`, \`lop\`, \`diem_tb\` rồi in ra bằng \`print()\`
+2. Dùng \`type()\` kiểm tra kiểu của \`3.14\` và \`"3.14"\` — giải thích sự khác biệt
+3. Thử gán \`x = 5\` rồi \`x = "năm"\` — Python có báo lỗi không? Tại sao?
 `),
   L(3, 1, 3, 'Bài 3: Nhập / xuất dữ liệu', 'input() và print() có format', 'easy', `
 ## Đọc dữ liệu từ bàn phím
