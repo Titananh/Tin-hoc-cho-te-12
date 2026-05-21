@@ -48,7 +48,6 @@ const L = (
 
 export const LESSONS: LessonContent[] = [
   // ─── CẤP 1: GIỚI THIỆU PYTHON ─────────────────────────────────────────────
-
   L(1, 1, 1, 'Bài 1: Python là gì?', 'Tổng quan về Python và môi trường lập trình', 'easy', `
 ## 🎯 Mục tiêu bài học
 Sau bài học này, bạn sẽ:
@@ -448,288 +447,64 @@ s[::-1]   # "nohtyP" (đảo ngược)
 `),
 
   // ─── CẤP 2: BIỂU THỨC VÀ TOÁN TỬ ─────────────────────────────────────────
-
   L(6, 2, 1, 'Bài 1: Biểu thức và phép so sánh', '<, <=, >, >=, ==, !=', 'easy', `
-## 🎯 Mục tiêu bài học
-- Hiểu khái niệm **biểu thức** (expression) trong Python
-- Nắm vững 6 toán tử so sánh và kết quả trả về
-- Phân biệt \`=\` (gán) và \`==\` (so sánh)
-- So sánh chuỗi theo thứ tự Unicode
+## Biểu thức là gì?
+**Biểu thức** là tổ hợp các giá trị, biến và toán tử cho ra một giá trị mới.
 
----
-
-## 📊 Biểu thức là gì?
-
-**Biểu thức** là tổ hợp các giá trị, biến và toán tử mà Python **tính ra một giá trị mới**.
-
-\`\`\`
-┌─────────────────────────────────────────────┐
-│           BIỂU THỨC (Expression)            │
-├─────────────────────────────────────────────┤
-│  Giá trị:    5, "An", True                  │
-│  Biến:       x, tuoi, diem                  │
-│  Phép toán:  x + 5, tuoi > 18              │
-│  Gọi hàm:   len("abc"), max(1, 2)          │
-│  Kết hợp:    (x + y) * 2 > 10              │
-└─────────────────────────────────────────────┘
-\`\`\`
+## Toán tử so sánh
+Trả về \`True\` hoặc \`False\`.
+| Toán tử | Ý nghĩa |
+|---|---|
+| \`==\` | bằng |
+| \`!=\` | khác |
+| \`<\`, \`>\`, \`<=\`, \`>=\` | so sánh |
 
 \`\`\`python
-# Mỗi dòng dưới đây là một biểu thức
-5 + 3           # → 8 (biểu thức số học)
-x > 10          # → True/False (biểu thức logic)
-"Xin" + " chào" # → "Xin chào" (biểu thức chuỗi)
+print(5 == 5)    # True
+print(3 != 3)    # False
+print("a" < "b") # True (so sánh theo Unicode)
 \`\`\`
 
----
-
-## 🔍 6 Toán tử so sánh
-
-Toán tử so sánh luôn trả về **\`True\`** hoặc **\`False\`** (kiểu \`bool\`).
-
-| Toán tử | Ý nghĩa | Ví dụ | Kết quả |
-|---------|---------|-------|---------|
-| \`==\` | Bằng | \`5 == 5\` | \`True\` |
-| \`!=\` | Khác | \`5 != 3\` | \`True\` |
-| \`<\` | Nhỏ hơn | \`3 < 5\` | \`True\` |
-| \`>\` | Lớn hơn | \`3 > 5\` | \`False\` |
-| \`<=\` | Nhỏ hơn hoặc bằng | \`5 <= 5\` | \`True\` |
-| \`>=\` | Lớn hơn hoặc bằng | \`3 >= 5\` | \`False\` |
-
-### Minh họa trực quan:
-
-\`\`\`
-Trục số:  ──1──2──3──4──5──6──7──8──9──10──▶
-
-  3 < 7?   3 nằm BÊN TRÁI 7 → True ✓
-  9 <= 5?  9 nằm BÊN PHẢI 5 → False ✗
-  5 == 5?  Cùng vị trí       → True ✓
-\`\`\`
-
----
-
-## ⚡ Phân biệt \`=\` và \`==\`
-
-\`\`\`python
-# = là GÁN giá trị (đặt vào hộp)
-x = 10          # Đặt 10 vào biến x
-
-# == là SO SÁNH (hỏi có bằng không?)
-x == 10         # True (x đang là 10)
-x == 5          # False
-\`\`\`
-
-> ⚠️ **Lỗi kinh điển:** Viết \`if x = 5\` thay vì \`if x == 5\` → Python báo SyntaxError!
-
----
-
-## 📝 So sánh chuỗi
-
-Python so sánh chuỗi theo **thứ tự Unicode** (gần giống bảng chữ cái):
-
-\`\`\`python
-print("a" < "b")      # True (a đứng trước b)
-print("apple" < "banana")  # True
-print("A" < "a")      # True (chữ hoa < chữ thường)
-print("abc" == "abc")  # True
-print("ab" < "abc")   # True (ngắn hơn = nhỏ hơn)
-\`\`\`
-
-### Bảng Unicode phổ biến:
-\`\`\`
-'0'-'9': 48-57
-'A'-'Z': 65-90
-'a'-'z': 97-122
-
-→ '0' < 'A' < 'a'
-\`\`\`
-
----
-
-## 🔗 So sánh chuỗi (chain comparison)
-
-Python cho phép viết so sánh chuỗi rất tự nhiên:
-
-\`\`\`python
-x = 15
-# Thay vì: x >= 10 and x <= 20
-print(10 <= x <= 20)   # True — x nằm trong [10, 20]
-
-# Kiểm tra 3 số tăng dần
-a, b, c = 1, 2, 3
-print(a < b < c)       # True
-\`\`\`
-
-> 🧪 **Thử ngay:** Gõ \`print(1 < 2 < 3)\` và \`print(1 < 2 > 3)\` — giải thích kết quả!
-
----
-
-## ⚠️ Lỗi thường gặp
-
-| Code | Lỗi | Cách sửa |
-|------|------|----------|
-| \`if x = 5:\` | SyntaxError | Đổi thành \`if x == 5:\` |
-| \`"10" > "9"\` trả về \`False\` | So sánh chuỗi, không phải số | Ép kiểu: \`int("10") > int("9")\` |
-| \`0.1 + 0.2 == 0.3\` → \`False\` | Lỗi số thực dấu phẩy động | Dùng \`abs(a - b) < 1e-9\` |
-
----
-
-## 💡 Mẹo hay
-- Dùng \`==\` để so sánh, \`=\` để gán — đừng nhầm!
-- So sánh chuỗi phân biệt hoa/thường: \`"An" != "an"\`
-- Muốn so sánh không phân biệt hoa/thường: \`s1.lower() == s2.lower()\`
-- Dùng chain comparison cho gọn: \`0 < x < 100\`
-
----
-
-## ✏️ Bài tập tự luyện
-1. Đọc 2 số a, b từ bàn phím. In ra \`True\` nếu a lớn hơn b, ngược lại \`False\`
-2. Kiểm tra một số n có nằm trong đoạn [1, 100] không (dùng chain comparison)
-3. Đọc 2 chuỗi, so sánh chúng không phân biệt hoa/thường và in kết quả
+## Bài tập
+1. Đọc 2 số, in ra số nào lớn hơn
+2. Kiểm tra một số có nằm trong [1, 100]
 `),
-
   L(7, 2, 2, 'Bài 2: Toán tử logic and / or / not', 'Kết hợp nhiều điều kiện', 'easy', `
-## 🎯 Mục tiêu bài học
-- Hiểu 3 toán tử logic: \`and\`, \`or\`, \`not\`
-- Đọc và xây dựng bảng chân trị
-- Áp dụng đoản mạch (short-circuit evaluation)
-- Kết hợp nhiều điều kiện trong bài toán thực tế
-
----
-
-## 📊 Bảng chân trị (Truth Table)
-
-\`\`\`
-┌───────┬───────┬─────────┬────────┬───────┐
-│   a   │   b   │ a and b │ a or b │ not a │
-├───────┼───────┼─────────┼────────┼───────┤
-│ True  │ True  │  True   │  True  │ False │
-│ True  │ False │  False  │  True  │ False │
-│ False │ True  │  False  │  True  │  True │
-│ False │ False │  False  │ False  │  True │
-└───────┴───────┴─────────┴────────┴───────┘
-\`\`\`
-
-### Cách nhớ nhanh:
-- **\`and\`** = "VÀ" → cả hai phải đúng mới đúng
-- **\`or\`** = "HOẶC" → chỉ cần một cái đúng là đúng
-- **\`not\`** = "KHÔNG" → đảo ngược
-
----
-
-## 🔍 Ví dụ thực tế
+## Bảng chân trị
+| a | b | a and b | a or b | not a |
+|---|---|---|---|---|
+| T | T | T | T | F |
+| T | F | F | T | F |
+| F | T | F | T | T |
+| F | F | F | F | T |
 
 \`\`\`python
 tuoi = 17
-diem = 8.5
-
-# Kiểm tra học sinh THPT giỏi
-if tuoi >= 15 and tuoi <= 18 and diem >= 8:
-    print("Học sinh THPT giỏi")
-
-# Kiểm tra được miễn thi
-if diem >= 9 or (diem >= 8 and hanh_kiem == "tot"):
-    print("Được miễn thi")
-
-# Kiểm tra KHÔNG phải số âm
-n = 5
-if not (n < 0):
-    print("Số không âm")
+if tuoi >= 16 and tuoi <= 18:
+    print("Là học sinh THPT")
 \`\`\`
 
----
+## Đoản mạch (short-circuit)
+- \`a and b\`: nếu a sai thì không cần xét b
+- \`a or b\`: nếu a đúng thì không cần xét b
 
-## ⚡ Đoản mạch (Short-circuit Evaluation)
-
-Python **dừng sớm** khi đã biết kết quả:
-
-\`\`\`
-and: Nếu vế trái = False → DỪNG (kết quả chắc chắn False)
-or:  Nếu vế trái = True  → DỪNG (kết quả chắc chắn True)
-\`\`\`
-
-\`\`\`python
-# Ứng dụng: tránh lỗi chia cho 0
-x = 0
-if x != 0 and 10 / x > 2:   # x = 0 → vế trái False → DỪNG
-    print("OK")              # Không bị ZeroDivisionError!
-
-# Ứng dụng: giá trị mặc định
-ten = input("Tên: ") or "Khách"  # Nếu nhập rỗng → dùng "Khách"
-\`\`\`
-
----
-
-## 📐 Thứ tự ưu tiên
-
-\`\`\`
-Cao nhất:  not
-           and
-Thấp nhất: or
-
-Ví dụ: not True or False and True
-     = (not True) or (False and True)
-     = False or False
-     = False
-\`\`\`
-
-> 🧪 **Thử ngay:** Gõ \`print(True or False and False)\` — kết quả là gì? Tại sao?
-
----
-
-## 🛠️ Bài toán thực tế: Xét tuyển đại học
-
-\`\`\`python
-diem_toan = float(input("Điểm Toán: "))
-diem_ly = float(input("Điểm Lý: "))
-diem_hoa = float(input("Điểm Hóa: "))
-
-tong = diem_toan + diem_ly + diem_hoa
-khong_mon_liet = diem_toan >= 1 and diem_ly >= 1 and diem_hoa >= 1
-
-if tong >= 18 and khong_mon_liet:
-    print("ĐỖ đại học!")
-else:
-    print("Chưa đủ điểm")
-\`\`\`
-
----
-
-## ⚠️ Lỗi thường gặp
-
-| Code | Lỗi | Cách sửa |
-|------|------|----------|
-| \`if x == 1 or 2:\` | Luôn True (2 là truthy) | \`if x == 1 or x == 2:\` |
-| \`if not x == 5:\` | Khó đọc | \`if x != 5:\` |
-| \`if x and y > 0:\` | Chỉ kiểm tra y > 0 | \`if x > 0 and y > 0:\` |
-
----
-
-## 💡 Mẹo hay
-- Dùng ngoặc \`()\` khi kết hợp \`and\` và \`or\` để rõ ràng
-- \`x in [1, 2, 3]\` thay cho \`x == 1 or x == 2 or x == 3\`
-- Đoản mạch giúp tránh lỗi runtime (chia 0, index ngoài mảng)
-
----
-
-## ✏️ Bài tập tự luyện
-1. Kiểm tra số n có phải **số chẵn dương** không (n > 0 và n chia hết 2)
-2. Đọc điểm 3 môn. In "ĐỖ" nếu trung bình >= 5 VÀ không môn nào dưới 3
-3. Đọc năm sinh. Kiểm tra có phải năm nhuận: chia hết 4 VÀ (không chia hết 100 HOẶC chia hết 400)
+## Bài tập
+1. Kiểm tra số n có phải số chẵn dương
+2. Kiểm tra điểm thi: đỗ nếu trung bình >= 5 và không môn nào < 3
 `),
-  L(8, 2, 3, 'B├ái 3: ├ëp kiß╗âu (type casting)', 'int() float() str() bool()', 'easy', `
-## V├¼ sao cß║ºn ├⌐p kiß╗âu?
-\`input()\` lu├┤n trß║ú \`str\`. Khi cß║ºn t├¡nh to├ín bß║ín phß║úi ├⌐p sang \`int\` hoß║╖c \`float\`.
+  L(8, 2, 3, 'Bài 3: Ép kiểu (type casting)', 'int() float() str() bool()', 'easy', `
+## Vì sao cần ép kiểu?
+\`input()\` luôn trả \`str\`. Khi cần tính toán bạn phải ép sang \`int\` hoặc \`float\`.
 
 \`\`\`python
-n = int(input("Nhß║¡p sß╗æ: "))
-giam_gia = float(input("Giß║úm gi├í: ")) / 100
+n = int(input("Nhập số: "))
+giam_gia = float(input("Giảm giá: ")) / 100
 \`\`\`
 
-## C├íc h├ám ├⌐p kiß╗âu
+## Các hàm ép kiểu
 \`\`\`python
 int("12")     # 12
-int(3.7)      # 3 (cß║»t phß║ºn thß║¡p ph├ón)
+int(3.7)      # 3 (cắt phần thập phân)
 float("3.14") # 3.14
 str(42)       # '42'
 bool(0)       # False
@@ -737,16 +512,16 @@ bool("")      # False
 bool("a")     # True
 \`\`\`
 
-## L╞░u ├╜
-- \`int("3.5")\` sß║╜ lß╗ùi v├¼ chuß╗ùi kh├┤ng phß║úi sß╗æ nguy├¬n
-- D├╣ng \`int(float("3.5"))\` ─æß╗â chuyß╗ân an to├án
+## Lưu ý
+- \`int("3.5")\` sẽ lỗi vì chuỗi không phải số nguyên
+- Dùng \`int(float("3.5"))\` để chuyển an toàn
 
-## B├ái tß║¡p
-1. ─Éß╗ìc 1 chuß╗ùi, kiß╗âm tra n├│ c├│ thß╗â chuyß╗ân th├ánh sß╗æ nguy├¬n kh├┤ng
-2. ─Éß╗ìc tuß╗òi v├á in xem c├│ phß║úi tuß╗òi vß╗ï th├ánh ni├¬n (12-17)
+## Bài tập
+1. Đọc 1 chuỗi, kiểm tra nó có thể chuyển thành số nguyên không
+2. Đọc tuổi và in xem có phải tuổi vị thành niên (12-17)
 `),
-  L(9, 2, 4, 'B├ái 4: H├ám to├ín hß╗ìc chuß║⌐n', 'abs, round, pow, math.sqrt, math.pi', 'easy', `
-## H├ám c├│ sß║╡n
+  L(9, 2, 4, 'Bài 4: Hàm toán học chuẩn', 'abs, round, pow, math.sqrt, math.pi', 'easy', `
+## Hàm có sẵn
 \`\`\`python
 abs(-5)       # 5
 round(3.7)    # 4
@@ -766,56 +541,56 @@ print(math.floor(3.7))# 3
 print(math.ceil(3.2)) # 4
 \`\`\`
 
-## B├ái tß║¡p
-1. T├¡nh diß╗çn t├¡ch h├¼nh tr├▓n b├ín k├¡nh r (d├╣ng math.pi)
-2. Cho a, b, c. In nghiß╗çm x = (-b + sqrt(b^2 - 4ac)) / 2a
+## Bài tập
+1. Tính diện tích hình tròn bán kính r (dùng math.pi)
+2. Cho a, b, c. In nghiệm x = (-b + sqrt(b^2 - 4ac)) / 2a
 `),
-  L(10, 2, 5, 'B├ái 5: To├ín tß╗¡ tr├¬n chuß╗ùi', 'in, count, find, replace', 'easy', `
-## Kiß╗âm tra chß╗⌐a vß╗¢i in
+  L(10, 2, 5, 'Bài 5: Toán tử trên chuỗi', 'in, count, find, replace', 'easy', `
+## Kiểm tra chứa với in
 \`\`\`python
 "py" in "python"     # True
 "x" not in "python"  # True
 \`\`\`
 
-## ─Éß║┐m v├á t├¼m
+## Đếm và tìm
 \`\`\`python
 "banana".count("a")     # 3
-"hello".find("l")        # 2 (vß╗ï tr├¡ ─æß║ºu ti├¬n)
-"hello".find("z")        # -1 (kh├┤ng t├¼m thß║Ñy)
+"hello".find("l")        # 2 (vị trí đầu tiên)
+"hello".find("z")        # -1 (không tìm thấy)
 \`\`\`
 
-## Thay thß║┐
+## Thay thế
 \`\`\`python
 "abc".replace("a", "X")   # 'Xbc'
 \`\`\`
 
-## B├ái tß║¡p
-1. ─Éß║┐m sß╗æ nguy├¬n ├óm trong chuß╗ùi ─æß║ºu v├áo
-2. Thay tß║Ñt cß║ú khoß║úng trß║»ng trong chuß╗ùi bß║▒ng dß║Ñu gß║ích d╞░ß╗¢i
+## Bài tập
+1. Đếm số nguyên âm trong chuỗi đầu vào
+2. Thay tất cả khoảng trắng trong chuỗi bằng dấu gạch dưới
 `),
 
-  // ΓöÇΓöÇΓöÇ Cß║ñP 3: C├éU Lß╗åNH ─ÉIß╗ÇU KIß╗åN ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
-  L(11, 3, 1, 'B├ái 1: C├óu lß╗çnh if', 'C├║ ph├íp v├á indent', 'easy', `
-## C├║ ph├íp
+  // ─── CẤP 3: CÂU LỆNH ĐIỀU KIỆN ───────────────────────────────────────────
+  L(11, 3, 1, 'Bài 1: Câu lệnh if', 'Cú pháp và indent', 'easy', `
+## Cú pháp
 \`\`\`python
-if ─æiß╗üu_kiß╗çn:
-    # khß╗æi lß╗çnh khi ─æ├║ng
+if điều_kiện:
+    # khối lệnh khi đúng
 \`\`\`
 
 \`\`\`python
 n = int(input())
 if n > 0:
-    print("Sß╗æ d╞░╞íng")
+    print("Số dương")
 \`\`\`
 
-## Indent (thß╗Ñt ─æß║ºu d├▓ng)
-Python d├╣ng **indent** thay v├¼ \`{ }\`. Quy ╞░ß╗¢c 4 dß║Ñu c├ích. Sai indent = lß╗ùi.
+## Indent (thụt đầu dòng)
+Python dùng **indent** thay vì \`{ }\`. Quy ước 4 dấu cách. Sai indent = lỗi.
 
-## B├ái tß║¡p
-1. Cho ─æiß╗âm trung b├¼nh, nß║┐u >= 5 in "─Éß╗ù"
-2. Cho 1 sß╗æ, nß║┐u l├á sß╗æ chß║╡n d╞░╞íng in "OK"
+## Bài tập
+1. Cho điểm trung bình, nếu >= 5 in "Đỗ"
+2. Cho 1 số, nếu là số chẵn dương in "OK"
 `),
-  L(12, 3, 2, 'B├ái 2: if / else', 'Hai nh├ính ─æß╗æi lß║¡p', 'easy', `
+  L(12, 3, 2, 'Bài 2: if / else', 'Hai nhánh đối lập', 'easy', `
 \`\`\`python
 n = int(input())
 if n % 2 == 0:
@@ -824,72 +599,72 @@ else:
     print("LE")
 \`\`\`
 
-## Kß║┐t hß╗úp nhiß╗üu ─æiß╗üu kiß╗çn
-C├│ thß╗â ─æß║╖t biß╗âu thß╗⌐c phß╗⌐c tß║íp vß╗¢i \`and\`, \`or\`:
+## Kết hợp nhiều điều kiện
+Có thể đặt biểu thức phức tạp với \`and\`, \`or\`:
 \`\`\`python
 if 0 < n < 100 and n % 2 == 0:
-    print("Sß╗æ chß║╡n trong [1, 99]")
+    print("Số chẵn trong [1, 99]")
 \`\`\`
 
-## B├ái tß║¡p
-1. Cho tuß╗òi, in "Trß║╗ em" nß║┐u < 16, ng╞░ß╗úc lß║íi in "Ng╞░ß╗¥i lß╗¢n"
-2. Kiß╗âm tra n─âm c├│ phß║úi n─âm nhuß║¡n: chia hß║┐t 4 v├á (kh├┤ng chia hß║┐t 100 hoß║╖c chia hß║┐t 400)
+## Bài tập
+1. Cho tuổi, in "Trẻ em" nếu < 16, ngược lại in "Người lớn"
+2. Kiểm tra năm có phải năm nhuận: chia hết 4 và (không chia hết 100 hoặc chia hết 400)
 `),
-  L(13, 3, 3, 'B├ái 3: if / elif / else', 'Nhiß╗üu nh├ính', 'easy', `
+  L(13, 3, 3, 'Bài 3: if / elif / else', 'Nhiều nhánh', 'easy', `
 \`\`\`python
 diem = float(input())
 if diem >= 9:
-    xep_loai = "Xuß║Ñt sß║»c"
+    xep_loai = "Xuất sắc"
 elif diem >= 7:
-    xep_loai = "Kh├í"
+    xep_loai = "Khá"
 elif diem >= 5:
-    xep_loai = "Trung b├¼nh"
+    xep_loai = "Trung bình"
 else:
-    xep_loai = "Yß║┐u"
+    xep_loai = "Yếu"
 print(xep_loai)
 \`\`\`
 
-## L╞░u ├╜
-- Chß╗ë mß╗Öt nh├ính ─æ╞░ß╗úc chß║íy
-- Thß╗⌐ tß╗▒ kiß╗âm tra rß║Ñt quan trß╗ìng
+## Lưu ý
+- Chỉ một nhánh được chạy
+- Thứ tự kiểm tra rất quan trọng
 
-## B├ái tß║¡p
-1. Cho th├íng, in sß╗æ ng├áy cß╗ºa th├íng ─æ├│ (x├⌐t 28/29 cho th├íng 2)
-2. Cho ─æiß╗âm 3 m├┤n, t├¡nh trung b├¼nh v├á xß║┐p loß║íi
+## Bài tập
+1. Cho tháng, in số ngày của tháng đó (xét 28/29 cho tháng 2)
+2. Cho điểm 3 môn, tính trung bình và xếp loại
 `),
-  L(14, 3, 4, 'B├ái 4: Lß╗ông if', 'if trong if', 'medium', `
+  L(14, 3, 4, 'Bài 4: Lồng if', 'if trong if', 'medium', `
 \`\`\`python
 diem = float(input())
 hanh_kiem = input()  # tot/kha/trung-binh
 
 if diem >= 8:
     if hanh_kiem == "tot":
-        print("Hß╗ìc sinh giß╗Åi")
+        print("Học sinh giỏi")
     else:
-        print("Cß║ºn cß╗æ gß║»ng hß║ính kiß╗âm")
+        print("Cần cố gắng hạnh kiểm")
 else:
-    print("Cß║ºn cß╗æ gß║»ng hß╗ìc tß║¡p")
+    print("Cần cố gắng học tập")
 \`\`\`
 
-## Mß║╣o
-C├│ thß╗â thay lß╗ông if bß║▒ng \`and\` ─æß╗â dß╗à ─æß╗ìc h╞ín:
+## Mẹo
+Có thể thay lồng if bằng \`and\` để dễ đọc hơn:
 \`\`\`python
 if diem >= 8 and hanh_kiem == "tot":
     ...
 \`\`\`
 
-## B├ái tß║¡p
-1. Ph├ón loß║íi tam gi├íc tß╗½ 3 cß║ính: ─æß╗üu, c├ón, vu├┤ng, th╞░ß╗¥ng
-2. Cho n─âm v├á th├íng, in sß╗æ ng├áy cß╗ºa th├íng ─æ├│
+## Bài tập
+1. Phân loại tam giác từ 3 cạnh: đều, cân, vuông, thường
+2. Cho năm và tháng, in số ngày của tháng đó
 `),
-  L(15, 3, 5, 'B├ái 5: To├ín tß╗¡ ba ng├┤i', 'value_if_true if cond else value_if_false', 'medium', `
-## C├║ ph├íp
+  L(15, 3, 5, 'Bài 5: Toán tử ba ngôi', 'value_if_true if cond else value_if_false', 'medium', `
+## Cú pháp
 \`\`\`python
 ket_qua = "CHAN" if n % 2 == 0 else "LE"
 print(ket_qua)
 \`\`\`
 
-Ho├án to├án t╞░╞íng ─æ╞░╞íng vß╗¢i:
+Hoàn toàn tương đương với:
 \`\`\`python
 if n % 2 == 0:
     ket_qua = "CHAN"
@@ -897,18 +672,18 @@ else:
     ket_qua = "LE"
 \`\`\`
 
-## Khi n├áo d├╣ng?
-- Khi g├ín biß║┐n ─æ╞ín giß║ún dß╗▒a tr├¬n ─æiß╗üu kiß╗çn
-- Khi muß╗æn code ngß║»n gß╗ìn
+## Khi nào dùng?
+- Khi gán biến đơn giản dựa trên điều kiện
+- Khi muốn code ngắn gọn
 
-## B├ái tß║¡p
-1. Cho 2 sß╗æ a, b. D├╣ng to├ín tß╗¡ ba ng├┤i in sß╗æ lß╗¢n h╞ín
-2. ─Éß╗ìc tuß╗òi, in "─Éß╗º tuß╗òi" / "Ch╞░a ─æß╗º tuß╗òi" l├íi xe (>= 18)
+## Bài tập
+1. Cho 2 số a, b. Dùng toán tử ba ngôi in số lớn hơn
+2. Đọc tuổi, in "Đủ tuổi" / "Chưa đủ tuổi" lái xe (>= 18)
 `),
 
-  // ΓöÇΓöÇΓöÇ Cß║ñP 4: V├ÆNG Lß║╢P ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
-  L(16, 4, 1, 'B├ái 1: V├▓ng lß║╖p for vß╗¢i range', 'range(n), range(a,b), range(a,b,step)', 'easy', `
-## C├║ ph├íp
+  // ─── CẤP 4: VÒNG LẶP ─────────────────────────────────────────────────────
+  L(16, 4, 1, 'Bài 1: Vòng lặp for với range', 'range(n), range(a,b), range(a,b,step)', 'easy', `
+## Cú pháp
 \`\`\`python
 for i in range(5):       # 0 1 2 3 4
     print(i)
@@ -920,18 +695,18 @@ for i in range(10, 0, -1):  # 10..1
     print(i)
 \`\`\`
 
-## In bß║úng cß╗¡u ch╞░╞íng
+## In bảng cửu chương
 \`\`\`python
 n = int(input())
 for i in range(1, 11):
     print(f"{n} x {i} = {n * i}")
 \`\`\`
 
-## B├ái tß║¡p
-1. In c├íc sß╗æ tß╗½ 1..N
-2. T├¡nh tß╗òng 1 + 2 + ... + N
+## Bài tập
+1. In các số từ 1..N
+2. Tính tổng 1 + 2 + ... + N
 `),
-  L(17, 4, 2, 'B├ái 2: V├▓ng lß║╖p while', 'Lß║╖p khi ─æiß╗üu kiß╗çn ─æ├║ng', 'easy', `
+  L(17, 4, 2, 'Bài 2: Vòng lặp while', 'Lặp khi điều kiện đúng', 'easy', `
 \`\`\`python
 n = int(input())
 i = 1
@@ -942,19 +717,19 @@ while i <= n:
 print(tong)
 \`\`\`
 
-## Khi n├áo d├╣ng while thay for?
-- Khi kh├┤ng biß║┐t tr╞░ß╗¢c sß╗æ lß║ºn lß║╖p
-- Khi ─æiß╗üu kiß╗çn kß║┐t th├║c phß╗Ñ thuß╗Öc dß╗» liß╗çu nhß║¡p
+## Khi nào dùng while thay for?
+- Khi không biết trước số lần lặp
+- Khi điều kiện kết thúc phụ thuộc dữ liệu nhập
 
-## L╞░u ├╜
-Phß║úi ─æß║úm bß║úo ─æiß╗üu kiß╗çn sß║╜ trß╗ƒ th├ánh False ─æß╗â tr├ính **v├▓ng lß║╖p v├┤ tß║¡n**.
+## Lưu ý
+Phải đảm bảo điều kiện sẽ trở thành False để tránh **vòng lặp vô tận**.
 
-## B├ái tß║¡p
-1. ─Éß╗ìc sß╗æ nguy├¬n ─æß║┐n khi gß║╖p 0, in tß╗òng c├íc sß╗æ ─æ├│ (kh├┤ng kß╗â 0)
-2. T├¼m sß╗æ b╞░ß╗¢c cß║ºn ─æß╗â chia n cho 2 ─æß║┐n khi n = 1 (v├¡ dß╗Ñ n=8 ΓåÆ 3 b╞░ß╗¢c)
+## Bài tập
+1. Đọc số nguyên đến khi gặp 0, in tổng các số đó (không kể 0)
+2. Tìm số bước cần để chia n cho 2 đến khi n = 1 (ví dụ n=8 → 3 bước)
 `),
-  L(18, 4, 3, 'B├ái 3: break v├á continue', 'Tho├ít sß╗¢m v├á bß╗Å qua', 'medium', `
-## break - tho├ít v├▓ng lß║╖p
+  L(18, 4, 3, 'Bài 3: break và continue', 'Thoát sớm và bỏ qua', 'medium', `
+## break - thoát vòng lặp
 \`\`\`python
 for i in range(100):
     if i * i > 50:
@@ -962,20 +737,20 @@ for i in range(100):
     print(i)
 \`\`\`
 
-## continue - bß╗Å qua l╞░ß╗út hiß╗çn tß║íi
+## continue - bỏ qua lượt hiện tại
 \`\`\`python
 for i in range(10):
     if i % 2 == 0:
-        continue   # bß╗Å qua sß╗æ chß║╡n
+        continue   # bỏ qua số chẵn
     print(i)
 \`\`\`
 
-## B├ái tß║¡p
-1. ─Éß╗ìc N sß╗æ. Dß╗½ng nhß║¡p khi gß║╖p sß╗æ ├óm
-2. In c├íc sß╗æ trong [1, 100] kh├┤ng chia hß║┐t cho 7
+## Bài tập
+1. Đọc N số. Dừng nhập khi gặp số âm
+2. In các số trong [1, 100] không chia hết cho 7
 `),
-  L(19, 4, 4, 'B├ái 4: V├▓ng lß║╖p lß╗ông', 'For trong for', 'medium', `
-## In ma trß║¡n sao *
+  L(19, 4, 4, 'Bài 4: Vòng lặp lồng', 'For trong for', 'medium', `
+## In ma trận sao *
 \`\`\`python
 n = int(input())
 for i in range(1, n + 1):
@@ -984,33 +759,33 @@ for i in range(1, n + 1):
     print()
 \`\`\`
 
-## T├¡ch ch├⌐o
+## Tích chéo
 \`\`\`python
 for i in range(2, 5):
     for j in range(2, 5):
         print(f"{i} * {j} = {i * j}")
 \`\`\`
 
-## B├ái tß║¡p
-1. In bß║úng nh├ón 1..9
-2. ─Éß║┐m sß╗æ cß║╖p (i, j) sao cho i + j = N vß╗¢i i, j thuß╗Öc [1, N]
+## Bài tập
+1. In bảng nhân 1..9
+2. Đếm số cặp (i, j) sao cho i + j = N với i, j thuộc [1, N]
 `),
-  L(20, 4, 5, 'B├ái 5: Ph├⌐p tß╗òng / t├¡ch / ─æß║┐m', 'Mß║½u accumulator', 'medium', `
-## Mß║½u cß╗Öng dß╗ôn
+  L(20, 4, 5, 'Bài 5: Phép tổng / tích / đếm', 'Mẫu accumulator', 'medium', `
+## Mẫu cộng dồn
 \`\`\`python
 tong = 0
 for i in range(1, n + 1):
     tong += i
 \`\`\`
 
-## Mß║½u nh├ón dß╗ôn
+## Mẫu nhân dồn
 \`\`\`python
 tich = 1
 for i in range(1, n + 1):
-    tich *= i  # giai thß╗½a n!
+    tich *= i  # giai thừa n!
 \`\`\`
 
-## Mß║½u ─æß║┐m
+## Mẫu đếm
 \`\`\`python
 dem = 0
 for ch in s:
@@ -1018,22 +793,22 @@ for ch in s:
         dem += 1
 \`\`\`
 
-## B├ái tß║¡p
-1. T├¡nh n!
-2. ─Éß║┐m sß╗æ ╞░ß╗¢c sß╗æ cß╗ºa n
+## Bài tập
+1. Tính n!
+2. Đếm số ước số của n
 `),
 
-  // ΓöÇΓöÇΓöÇ Cß║ñP 5: H├ÇM TRONG PYTHON ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
-  L(21, 5, 1, 'B├ái 1: ─Éß╗ïnh ngh─⌐a v├á gß╗ìi h├ám', 'def, return', 'easy', `
+  // ─── CẤP 5: HÀM TRONG PYTHON ─────────────────────────────────────────────
+  L(21, 5, 1, 'Bài 1: Định nghĩa và gọi hàm', 'def, return', 'easy', `
 \`\`\`python
 def chao(ten):
-    print(f"Xin ch├áo {ten}")
+    print(f"Xin chào {ten}")
 
 chao("An")
-chao("B├¼nh")
+chao("Bình")
 \`\`\`
 
-## H├ám c├│ gi├í trß╗ï trß║ú vß╗ü
+## Hàm có giá trị trả về
 \`\`\`python
 def cong(a, b):
     return a + b
@@ -1041,49 +816,49 @@ def cong(a, b):
 print(cong(3, 5))  # 8
 \`\`\`
 
-## Lß╗úi ├¡ch cß╗ºa h├ám
-- Tr├ính lß║╖p lß║íi code
-- Dß╗à bß║úo tr├¼ v├á ─æß╗ìc
-- C├│ thß╗â test ri├¬ng tß╗½ng h├ám
+## Lợi ích của hàm
+- Tránh lặp lại code
+- Dễ bảo trì và đọc
+- Có thể test riêng từng hàm
 
-## B├ái tß║¡p
-1. Viß║┐t h├ám \`tinh_giai_thua(n)\`
-2. Viß║┐t h├ám \`la_so_nguyen_to(n)\` trß║ú vß╗ü True/False
+## Bài tập
+1. Viết hàm \`tinh_giai_thua(n)\`
+2. Viết hàm \`la_so_nguyen_to(n)\` trả về True/False
 `),
-  L(22, 5, 2, 'B├ái 2: Tham sß╗æ mß║╖c ─æß╗ïnh', 'def f(x, y=0)', 'easy', `
+  L(22, 5, 2, 'Bài 2: Tham số mặc định', 'def f(x, y=0)', 'easy', `
 \`\`\`python
-def chao(ten, loi="Xin ch├áo"):
+def chao(ten, loi="Xin chào"):
     print(f"{loi}, {ten}")
 
-chao("An")             # Xin ch├áo, An
-chao("B├¼nh", "Hello")  # Hello, B├¼nh
+chao("An")             # Xin chào, An
+chao("Bình", "Hello")  # Hello, Bình
 \`\`\`
 
-## Tham sß╗æ c├│ t├¬n
+## Tham số có tên
 \`\`\`python
-chao(loi="Hi", ten="C╞░ß╗¥ng")
+chao(loi="Hi", ten="Cường")
 \`\`\`
 
-## L╞░u ├╜
-Tham sß╗æ mß║╖c ─æß╗ïnh n├¬n l├á **immutable** (sß╗æ, chuß╗ùi). Tr├ính d├╣ng list/dict mß║╖c ─æß╗ïnh v├¼ sß║╜ chia sß║╗ giß╗»a c├íc lß║ºn gß╗ìi.
+## Lưu ý
+Tham số mặc định nên là **immutable** (số, chuỗi). Tránh dùng list/dict mặc định vì sẽ chia sẻ giữa các lần gọi.
 
-## B├ái tß║¡p
-1. H├ám \`luy_thua(co_so, mu=2)\` mß║╖c ─æß╗ïnh b├¼nh ph╞░╞íng
-2. H├ám \`tao_chao(ten, gio=8)\` ch├áo theo giß╗¥ (s├íng/chiß╗üu/tß╗æi)
+## Bài tập
+1. Hàm \`luy_thua(co_so, mu=2)\` mặc định bình phương
+2. Hàm \`tao_chao(ten, gio=8)\` chào theo giờ (sáng/chiều/tối)
 `),
-  L(23, 5, 3, 'B├ái 3: Phß║ím vi biß║┐n', 'Biß║┐n cß╗Ñc bß╗Ö v├á to├án cß╗Ñc', 'medium', `
-## Biß║┐n cß╗Ñc bß╗Ö
-Biß║┐n khai b├ío b├¬n trong h├ám chß╗ë tß╗ôn tß║íi trong h├ám.
+  L(23, 5, 3, 'Bài 3: Phạm vi biến', 'Biến cục bộ và toàn cục', 'medium', `
+## Biến cục bộ
+Biến khai báo bên trong hàm chỉ tồn tại trong hàm.
 \`\`\`python
 def f():
-    x = 10  # cß╗Ñc bß╗Ö
+    x = 10  # cục bộ
     print(x)
 
 f()
 # print(x)  # NameError
 \`\`\`
 
-## Biß║┐n to├án cß╗Ñc
+## Biến toàn cục
 \`\`\`python
 dem = 0
 
@@ -1096,14 +871,14 @@ tang()
 print(dem)  # 2
 \`\`\`
 
-## L╞░u ├╜
-Hß║ín chß║┐ d├╣ng \`global\`. Tß╗æt h╞ín l├á **trß║ú vß╗ü gi├í trß╗ï** tß╗½ h├ám.
+## Lưu ý
+Hạn chế dùng \`global\`. Tốt hơn là **trả về giá trị** từ hàm.
 
-## B├ái tß║¡p
-1. Viß║┐t h├ám ─æß║┐m sß╗æ lß║ºn mß╗Öt k├╜ tß╗▒ xuß║Ñt hiß╗çn trong chuß╗ùi
-2. Viß║┐t h├ám \`hoan_doi(a, b)\` trß║ú vß╗ü tuple (b, a)
+## Bài tập
+1. Viết hàm đếm số lần một ký tự xuất hiện trong chuỗi
+2. Viết hàm \`hoan_doi(a, b)\` trả về tuple (b, a)
 `),
-  L(24, 5, 4, 'B├ái 4: ─Éß╗ç quy c╞í bß║ún', 'H├ám tß╗▒ gß╗ìi ch├¡nh n├│', 'medium', `
+  L(24, 5, 4, 'Bài 4: Đệ quy cơ bản', 'Hàm tự gọi chính nó', 'medium', `
 \`\`\`python
 def giai_thua(n):
     if n == 0:
@@ -1113,11 +888,11 @@ def giai_thua(n):
 print(giai_thua(5))  # 120
 \`\`\`
 
-## Y├¬u cß║ºu cß╗ºa ─æß╗ç quy
-1. **Tr╞░ß╗¥ng hß╗úp dß╗½ng** (base case)
-2. **Lß╗¥i gß╗ìi ─æß╗ç quy** tiß║┐n gß║ºn h╞ín vß╗ü base case
+## Yêu cầu của đệ quy
+1. **Trường hợp dừng** (base case)
+2. **Lời gọi đệ quy** tiến gần hơn về base case
 
-## Fibonacci ─æß╗ç quy
+## Fibonacci đệ quy
 \`\`\`python
 def fib(n):
     if n < 2:
@@ -1125,51 +900,51 @@ def fib(n):
     return fib(n - 1) + fib(n - 2)
 \`\`\`
 
-ΓÜá∩╕Å ─Éß╗ç quy kh├┤ng nhß╗¢ rß║Ñt chß║¡m vß╗¢i n lß╗¢n. N├¬n d├╣ng v├▓ng lß║╖p hoß║╖c memoization.
+⚠️ Đệ quy không nhớ rất chậm với n lớn. Nên dùng vòng lặp hoặc memoization.
 
-## B├ái tß║¡p
-1. H├ám t├¡nh tß╗òng 1 + 2 + ... + n bß║▒ng ─æß╗ç quy
-2. H├ám ─æß║┐m sß╗æ chß╗» sß╗æ cß╗ºa n
+## Bài tập
+1. Hàm tính tổng 1 + 2 + ... + n bằng đệ quy
+2. Hàm đếm số chữ số của n
 `),
-  L(25, 5, 5, 'B├ái 5: H├ám lambda v├á map/filter', 'H├ám v├┤ danh', 'medium', `
+  L(25, 5, 5, 'Bài 5: Hàm lambda và map/filter', 'Hàm vô danh', 'medium', `
 ## Lambda
 \`\`\`python
 binh_phuong = lambda x: x * x
 print(binh_phuong(5))  # 25
 \`\`\`
 
-## D├╣ng vß╗¢i map / filter
+## Dùng với map / filter
 \`\`\`python
 arr = [1, 2, 3, 4, 5]
 print(list(map(lambda x: x * 2, arr)))      # [2, 4, 6, 8, 10]
 print(list(filter(lambda x: x % 2 == 0, arr)))  # [2, 4]
 \`\`\`
 
-## sorted vß╗¢i key
+## sorted với key
 \`\`\`python
-hs = [("An", 8), ("B├¼nh", 9), ("C╞░ß╗¥ng", 7)]
+hs = [("An", 8), ("Bình", 9), ("Cường", 7)]
 print(sorted(hs, key=lambda x: x[1], reverse=True))
 \`\`\`
 
-## B├ái tß║¡p
-1. Sß║»p xß║┐p danh s├ích chuß╗ùi theo ─æß╗Ö d├ái
-2. Lß╗ìc c├íc sß╗æ > 0 trong list nhß║¡p tß╗½ b├án ph├¡m
+## Bài tập
+1. Sắp xếp danh sách chuỗi theo độ dài
+2. Lọc các số > 0 trong list nhập từ bàn phím
 `),
 
-  // ΓöÇΓöÇΓöÇ Cß║ñP 6: DANH S├üCH V├Ç TUPLE ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
-  L(26, 6, 1, 'B├ái 1: List c╞í bß║ún', 'Khai b├ío, truy cß║¡p, cß║¡p nhß║¡t', 'easy', `
-## Khai b├ío
+  // ─── CẤP 6: DANH SÁCH VÀ TUPLE ───────────────────────────────────────────
+  L(26, 6, 1, 'Bài 1: List cơ bản', 'Khai báo, truy cập, cập nhật', 'easy', `
+## Khai báo
 \`\`\`python
 arr = [1, 2, 3]
 arr2 = ["a", "b", "c"]
 arr3 = []
 \`\`\`
 
-## Truy cß║¡p
+## Truy cập
 \`\`\`python
-arr[0]    # 1 (phß║ºn tß╗¡ ─æß║ºu)
-arr[-1]   # 3 (phß║ºn tß╗¡ cuß╗æi)
-arr[1] = 99  # g├ín
+arr[0]    # 1 (phần tử đầu)
+arr[-1]   # 3 (phần tử cuối)
+arr[1] = 99  # gán
 \`\`\`
 
 ## Slicing
@@ -1180,24 +955,24 @@ arr[:3]    # [10, 20, 30]
 arr[::2]   # [10, 30, 50]
 \`\`\`
 
-## B├ái tß║¡p
-1. ─Éß╗ìc N sß╗æ rß╗ôi in ra theo thß╗⌐ tß╗▒ ng╞░ß╗úc lß║íi
-2. In phß║ºn tß╗¡ lß╗¢n nhß║Ñt v├á nhß╗Å nhß║Ñt cß╗ºa list
+## Bài tập
+1. Đọc N số rồi in ra theo thứ tự ngược lại
+2. In phần tử lớn nhất và nhỏ nhất của list
 `),
-  L(27, 6, 2, 'B├ái 2: Ph╞░╞íng thß╗⌐c list', 'append, insert, remove, pop, sort', 'easy', `
+  L(27, 6, 2, 'Bài 2: Phương thức list', 'append, insert, remove, pop, sort', 'easy', `
 \`\`\`python
 arr = [3, 1, 4, 1, 5]
 
 arr.append(9)     # [3, 1, 4, 1, 5, 9]
 arr.insert(0, 0)  # [0, 3, 1, 4, 1, 5, 9]
-arr.remove(1)     # bß╗Å phß║ºn tß╗¡ ─æß║ºu ti├¬n c├│ gi├í trß╗ï 1
-arr.pop()         # bß╗Å phß║ºn tß╗¡ cuß╗æi, trß║ú vß╗ü n├│
-arr.sort()        # sß║»p xß║┐p t─âng dß║ºn
+arr.remove(1)     # bỏ phần tử đầu tiên có giá trị 1
+arr.pop()         # bỏ phần tử cuối, trả về nó
+arr.sort()        # sắp xếp tăng dần
 arr.sort(reverse=True)
 arr.reverse()
 \`\`\`
 
-## Mß╗Öt sß╗æ h├ám hß╗»u ├¡ch
+## Một số hàm hữu ích
 \`\`\`python
 sum(arr)
 len(arr)
@@ -1205,11 +980,11 @@ min(arr)
 max(arr)
 \`\`\`
 
-## B├ái tß║¡p
-1. ─Éß╗ìc N sß╗æ, ─æß║┐m sß╗æ chß║╡n
-2. ─Éß╗ìc N sß╗æ, in tß╗òng v├á trung b├¼nh
+## Bài tập
+1. Đọc N số, đếm số chẵn
+2. Đọc N số, in tổng và trung bình
 `),
-  L(28, 6, 3, 'B├ái 3: List comprehension', '[expr for x in iterable if cond]', 'medium', `
+  L(28, 6, 3, 'Bài 3: List comprehension', '[expr for x in iterable if cond]', 'medium', `
 \`\`\`python
 binh_phuong = [x * x for x in range(1, 6)]
 # [1, 4, 9, 16, 25]
@@ -1218,33 +993,33 @@ chan = [x for x in range(20) if x % 2 == 0]
 # [0, 2, 4, ..., 18]
 \`\`\`
 
-## Lß╗úi ├¡ch
-- Ngß║»n gß╗ìn, dß╗à ─æß╗ìc
-- Th╞░ß╗¥ng nhanh h╞ín v├▓ng for th├┤ng th╞░ß╗¥ng
+## Lợi ích
+- Ngắn gọn, dễ đọc
+- Thường nhanh hơn vòng for thông thường
 
-## L╞░u ├╜
-─Éß╗½ng nhß╗ôi nh├⌐t qu├í nhiß╗üu logic. Khi phß╗⌐c tß║íp n├¬n d├╣ng v├▓ng for th╞░ß╗¥ng ─æß╗â dß╗à ─æß╗ìc.
+## Lưu ý
+Đừng nhồi nhét quá nhiều logic. Khi phức tạp nên dùng vòng for thường để dễ đọc.
 
-## B├ái tß║¡p
-1. Tß║ío list c├íc sß╗æ chia hß║┐t cho 3 trong [1, 50] bß║▒ng comprehension
-2. Tß║ío list b├¼nh ph╞░╞íng c├íc sß╗æ nguy├¬n tß╗æ < 30
+## Bài tập
+1. Tạo list các số chia hết cho 3 trong [1, 50] bằng comprehension
+2. Tạo list bình phương các số nguyên tố < 30
 `),
-  L(29, 6, 4, 'B├ái 4: Tuple v├á unpacking', 'Tuple bß║Ñt biß║┐n, ho├ín ─æß╗òi biß║┐n', 'medium', `
-## Tuple - "list bß║Ñt biß║┐n"
+  L(29, 6, 4, 'Bài 4: Tuple và unpacking', 'Tuple bất biến, hoán đổi biến', 'medium', `
+## Tuple - "list bất biến"
 \`\`\`python
 toa_do = (3, 4)
-toa_do[0] = 5  # TypeError, kh├┤ng g├ín ─æ╞░ß╗úc
+toa_do[0] = 5  # TypeError, không gán được
 \`\`\`
 
 ## Unpacking
 \`\`\`python
 a, b = 10, 20
-a, b = b, a   # ho├ín ─æß╗òi
+a, b = b, a   # hoán đổi
 
 ten, tuoi = ("An", 17)
 \`\`\`
 
-## Trß║ú vß╗ü nhiß╗üu gi├í trß╗ï
+## Trả về nhiều giá trị
 \`\`\`python
 def chia_du(a, b):
     return a // b, a % b
@@ -1252,12 +1027,12 @@ def chia_du(a, b):
 q, r = chia_du(17, 5)
 \`\`\`
 
-## B├ái tß║¡p
-1. Viß║┐t h├ám trß║ú vß╗ü cß║ú max v├á min cß╗ºa list
-2. Ho├ín ─æß╗òi 2 biß║┐n a, b trong 1 d├▓ng
+## Bài tập
+1. Viết hàm trả về cả max và min của list
+2. Hoán đổi 2 biến a, b trong 1 dòng
 `),
-  L(30, 6, 5, 'B├ái 5: Duyß╗çt v├á lß╗ìc list', 'Mß║½u thuß║¡t to├ín c╞í bß║ún tr├¬n list', 'medium', `
-## T├¼m phß║ºn tß╗¡
+  L(30, 6, 5, 'Bài 5: Duyệt và lọc list', 'Mẫu thuật toán cơ bản trên list', 'medium', `
+## Tìm phần tử
 \`\`\`python
 def tim(arr, x):
     for i, v in enumerate(arr):
@@ -1266,31 +1041,31 @@ def tim(arr, x):
     return -1
 \`\`\`
 
-## ─Éß║┐m
+## Đếm
 \`\`\`python
 def dem_chan(arr):
     return sum(1 for x in arr if x % 2 == 0)
 \`\`\`
 
-## Tß╗òng / trung b├¼nh
+## Tổng / trung bình
 \`\`\`python
 trung_binh = sum(arr) / len(arr) if arr else 0
 \`\`\`
 
-## B├ái tß║¡p
-1. ─Éß╗ìc N sß╗æ, in chß╗ë sß╗æ cß╗ºa phß║ºn tß╗¡ lß╗¢n nhß║Ñt
-2. ─Éß╗ìc N sß╗æ, in c├íc sß╗æ > trung b├¼nh cß╗ºa list
+## Bài tập
+1. Đọc N số, in chỉ số của phần tử lớn nhất
+2. Đọc N số, in các số > trung bình của list
 `),
 
-  // ΓöÇΓöÇΓöÇ Cß║ñP 7: CHUß╗ûI K├¥ Tß╗░ ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
-  L(31, 7, 1, 'B├ái 1: Duyß╗çt chuß╗ùi', 'for ch in s', 'easy', `
+  // ─── CẤP 7: CHUỖI KÝ TỰ ──────────────────────────────────────────────────
+  L(31, 7, 1, 'Bài 1: Duyệt chuỗi', 'for ch in s', 'easy', `
 \`\`\`python
 s = input()
 for ch in s:
     print(ch.upper())
 \`\`\`
 
-## Kiß╗âm tra ph├ón loß║íi k├╜ tß╗▒
+## Kiểm tra phân loại ký tự
 \`\`\`python
 "a".isalpha()   # True
 "3".isdigit()   # True
@@ -1298,47 +1073,47 @@ for ch in s:
 " ".isspace()   # True
 \`\`\`
 
-## B├ái tß║¡p
-1. ─Éß║┐m sß╗æ chß╗» c├íi v├á sß╗æ chß╗» sß╗æ trong chuß╗ùi
-2. In chuß╗ùi m├á mß╗ùi k├╜ tß╗▒ ─æ╞░ß╗úc lß║╖p lß║íi 2 lß║ºn
+## Bài tập
+1. Đếm số chữ cái và số chữ số trong chuỗi
+2. In chuỗi mà mỗi ký tự được lặp lại 2 lần
 `),
-  L(32, 7, 2, 'B├ái 2: T├ích v├á gh├⌐p chuß╗ùi', 'split, join', 'easy', `
+  L(32, 7, 2, 'Bài 2: Tách và ghép chuỗi', 'split, join', 'easy', `
 \`\`\`python
 "a,b,c".split(",")     # ['a', 'b', 'c']
-"  hi  bro  ".split()  # ['hi', 'bro'] (t├ích theo khoß║úng trß║»ng)
+"  hi  bro  ".split()  # ['hi', 'bro'] (tách theo khoảng trắng)
 
 " - ".join(["a", "b"]) # 'a - b'
 \`\`\`
 
-## ─Éß╗ìc nhiß╗üu sß╗æ trong 1 d├▓ng
+## Đọc nhiều số trong 1 dòng
 \`\`\`python
 arr = list(map(int, input().split()))
 \`\`\`
 
-## B├ái tß║¡p
-1. ─Éß╗ìc d├▓ng "t├¬n,tuß╗òi" v├á in ra t├ích rß╗¥i
-2. Tß╗òng c├íc sß╗æ trong d├▓ng nhß║¡p
+## Bài tập
+1. Đọc dòng "tên,tuổi" và in ra tách rời
+2. Tổng các số trong dòng nhập
 `),
-  L(33, 7, 3, 'B├ái 3: Xß╗¡ l├╜ in/out chuß╗ùi', 'format, f-string n├óng cao', 'medium', `
+  L(33, 7, 3, 'Bài 3: Xử lý in/out chuỗi', 'format, f-string nâng cao', 'medium', `
 \`\`\`python
 ten = "An"
 diem = 8.567
 print(f"{ten:>10} - {diem:>5.2f}")
 \`\`\`
 
-## Cß╗¥ ─æß╗ïnh dß║íng
-| Cß╗¥ | T├íc dß╗Ñng |
+## Cờ định dạng
+| Cờ | Tác dụng |
 |---|---|
-| \`>n\` | c─ân phß║úi, ─æß╗Ö rß╗Öng n |
-| \`<n\` | c─ân tr├íi |
-| \`^n\` | c─ân giß╗»a |
-| \`.kf\` | k chß╗» sß╗æ thß║¡p ph├ón |
+| \`>n\` | căn phải, độ rộng n |
+| \`<n\` | căn trái |
+| \`^n\` | căn giữa |
+| \`.kf\` | k chữ số thập phân |
 
-## B├ái tß║¡p
-1. In bß║úng ─æiß╗âm c├│ cß╗Öt thß║│ng h├áng
-2. In sß╗æ c├│ ─æ├║ng 3 chß╗» sß╗æ (─æß╗çm sß╗æ 0 ph├¡a tr╞░ß╗¢c)
+## Bài tập
+1. In bảng điểm có cột thẳng hàng
+2. In số có đúng 3 chữ số (đệm số 0 phía trước)
 `),
-  L(34, 7, 4, 'B├ái 4: Chuß╗ùi ─æß╗æi xß╗⌐ng (palindrome)', 'Kiß╗âm tra chuß╗ùi ─æß║úo == ch├¡nh n├│', 'medium', `
+  L(34, 7, 4, 'Bài 4: Chuỗi đối xứng (palindrome)', 'Kiểm tra chuỗi đảo == chính nó', 'medium', `
 \`\`\`python
 s = input().lower().replace(" ", "")
 if s == s[::-1]:
@@ -1347,15 +1122,15 @@ else:
     print("NO")
 \`\`\`
 
-## Mß╗ƒ rß╗Öng
-- Bß╗Å dß║Ñu c├óu tr╞░ß╗¢c khi kiß╗âm tra
-- T├¼m chuß╗ùi con ─æß╗æi xß╗⌐ng d├ái nhß║Ñt
+## Mở rộng
+- Bỏ dấu câu trước khi kiểm tra
+- Tìm chuỗi con đối xứng dài nhất
 
-## B├ái tß║¡p
-1. ─Éß║┐m sß╗æ chuß╗ùi con ─æß╗æi xß╗⌐ng ─æß╗Ö d├ái 3 trong chuß╗ùi ─æß║ºu v├áo
-2. Cho list chuß╗ùi, in c├íc chuß╗ùi ─æß╗æi xß╗⌐ng
+## Bài tập
+1. Đếm số chuỗi con đối xứng độ dài 3 trong chuỗi đầu vào
+2. Cho list chuỗi, in các chuỗi đối xứng
 `),
-  L(35, 7, 5, 'B├ái 5: M├ú ho├í / giß║úi m├ú ─æ╞ín giß║ún', 'Caesar cipher', 'hard', `
+  L(35, 7, 5, 'Bài 5: Mã hoá / giải mã đơn giản', 'Caesar cipher', 'hard', `
 \`\`\`python
 def ma_hoa(s, k):
     res = ""
@@ -1370,17 +1145,17 @@ def ma_hoa(s, k):
 print(ma_hoa("Hello", 3))  # Khoor
 \`\`\`
 
-## ord() v├á chr()
+## ord() và chr()
 - \`ord("A")\` = 65
 - \`chr(65)\` = "A"
 
-## B├ái tß║¡p
-1. Viß║┐t h├ám giß║úi m├ú Caesar
-2. ─Éß║┐m tß║ºn suß║Ñt k├╜ tß╗▒ trong chuß╗ùi (bß╗Å qua hoa th╞░ß╗¥ng)
+## Bài tập
+1. Viết hàm giải mã Caesar
+2. Đếm tần suất ký tự trong chuỗi (bỏ qua hoa thường)
 `),
 
-  // ΓöÇΓöÇΓöÇ Cß║ñP 8: Tß╗¬ ─ÉIß╗éN V├Ç Tß║¼P Hß╗óP ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
-  L(36, 8, 1, 'B├ái 1: Dictionary c╞í bß║ún', 'Khai b├ío, get, set', 'easy', `
+  // ─── CẤP 8: TỪ ĐIỂN VÀ TẬP HỢP ───────────────────────────────────────────
+  L(36, 8, 1, 'Bài 1: Dictionary cơ bản', 'Khai báo, get, set', 'easy', `
 \`\`\`python
 hs = {"ten": "An", "tuoi": 17, "diem": 8.5}
 
@@ -1390,19 +1165,19 @@ hs["lop"] = "12A"
 del hs["diem"]
 \`\`\`
 
-## get() an to├án
+## get() an toàn
 \`\`\`python
 hs.get("dia_chi")           # None
 hs.get("dia_chi", "N/A")    # 'N/A'
 \`\`\`
 
-## B├ái tß║¡p
-1. Tß║ío dict ─æiß╗âm 3 m├┤n rß╗ôi in
-2. Cho dict hß╗ìc sinh, ─æß╗òi tuß╗òi tß╗½ 17 th├ánh 18
+## Bài tập
+1. Tạo dict điểm 3 môn rồi in
+2. Cho dict học sinh, đổi tuổi từ 17 thành 18
 `),
-  L(37, 8, 2, 'B├ái 2: Duyß╗çt dictionary', 'keys, values, items', 'easy', `
+  L(37, 8, 2, 'Bài 2: Duyệt dictionary', 'keys, values, items', 'easy', `
 \`\`\`python
-hs = {"An": 8, "B├¼nh": 9, "C╞░ß╗¥ng": 7}
+hs = {"An": 8, "Bình": 9, "Cường": 7}
 
 for ten in hs:
     print(ten)
@@ -1413,7 +1188,7 @@ for ten, diem in hs.items():
 print(list(hs.values()))  # [8, 9, 7]
 \`\`\`
 
-## ─Éß║┐m tß║ºn suß║Ñt bß║▒ng dict
+## Đếm tần suất bằng dict
 \`\`\`python
 dem = {}
 for ch in "banana":
@@ -1421,11 +1196,11 @@ for ch in "banana":
 print(dem)   # {'b': 1, 'a': 3, 'n': 2}
 \`\`\`
 
-## B├ái tß║¡p
-1. ─Éß╗ìc N tß╗½, in tß║ºn suß║Ñt xuß║Ñt hiß╗çn
-2. T├¼m key c├│ value lß╗¢n nhß║Ñt
+## Bài tập
+1. Đọc N từ, in tần suất xuất hiện
+2. Tìm key có value lớn nhất
 `),
-  L(38, 8, 3, 'B├ái 3: Set', 'Tß║¡p hß╗úp kh├┤ng tr├╣ng lß║╖p', 'medium', `
+  L(38, 8, 3, 'Bài 3: Set', 'Tập hợp không trùng lặp', 'medium', `
 \`\`\`python
 s = {1, 2, 3, 2, 1}
 print(s)  # {1, 2, 3}
@@ -1434,26 +1209,26 @@ s.add(4)
 s.remove(1)
 \`\`\`
 
-## Ph├⌐p to├ín tß║¡p hß╗úp
+## Phép toán tập hợp
 \`\`\`python
 A = {1, 2, 3}
 B = {3, 4, 5}
-A | B   # hß╗úp {1, 2, 3, 4, 5}
+A | B   # hợp {1, 2, 3, 4, 5}
 A & B   # giao {3}
-A - B   # hiß╗çu {1, 2}
+A - B   # hiệu {1, 2}
 \`\`\`
 
-## Loß║íi bß╗Å tr├╣ng trong list
+## Loại bỏ trùng trong list
 \`\`\`python
 arr = [1, 2, 1, 3, 2]
 unique = list(set(arr))
 \`\`\`
 
-## B├ái tß║¡p
-1. ─Éß║┐m sß╗æ k├╜ tß╗▒ kh├íc nhau trong chuß╗ùi
-2. Cho 2 list, in c├íc phß║ºn tß╗¡ c├│ ß╗ƒ cß║ú hai
+## Bài tập
+1. Đếm số ký tự khác nhau trong chuỗi
+2. Cho 2 list, in các phần tử có ở cả hai
 `),
-  L(39, 8, 4, 'B├ái 4: B├ái to├ín ─æß║┐m vß╗¢i dict', 'Counter pattern', 'medium', `
+  L(39, 8, 4, 'Bài 4: Bài toán đếm với dict', 'Counter pattern', 'medium', `
 \`\`\`python
 from collections import Counter
 
@@ -1462,74 +1237,74 @@ print(c)             # Counter({'a': 5, 'b': 2, 'r': 2, ...})
 print(c.most_common(3))  # [('a', 5), ('b', 2), ('r', 2)]
 \`\`\`
 
-## B├ái tß║¡p
-1. ─Éß║┐m tß║ºn suß║Ñt c├íc tß╗½ trong c├óu (t├ích theo khoß║úng trß║»ng)
-2. T├¼m k├╜ tß╗▒ xuß║Ñt hiß╗çn nhiß╗üu nhß║Ñt trong chuß╗ùi
+## Bài tập
+1. Đếm tần suất các từ trong câu (tách theo khoảng trắng)
+2. Tìm ký tự xuất hiện nhiều nhất trong chuỗi
 `),
-  L(40, 8, 5, 'B├ái 5: Quß║ún l├╜ danh s├ích hß╗ìc sinh', 'D├╣ng dict + list kß║┐t hß╗úp', 'medium', `
+  L(40, 8, 5, 'Bài 5: Quản lý danh sách học sinh', 'Dùng dict + list kết hợp', 'medium', `
 \`\`\`python
 hs_list = [
     {"ten": "An", "diem": 8.5},
-    {"ten": "B├¼nh", "diem": 7.2},
-    {"ten": "C╞░ß╗¥ng", "diem": 9.0},
+    {"ten": "Bình", "diem": 7.2},
+    {"ten": "Cường", "diem": 9.0},
 ]
 
-# Sß║»p theo ─æiß╗âm
+# Sắp theo điểm
 hs_sorted = sorted(hs_list, key=lambda x: x["diem"], reverse=True)
 for hs in hs_sorted:
     print(hs["ten"], hs["diem"])
 \`\`\`
 
-## Lß╗ìc
+## Lọc
 \`\`\`python
 gioi = [hs for hs in hs_list if hs["diem"] >= 8]
 \`\`\`
 
-## B├ái tß║¡p
-1. T├¡nh trung b├¼nh ─æiß╗âm cß║ú lß╗¢p
-2. Ph├ón loß║íi hß╗ìc sinh th├ánh G/K/TB/Y
+## Bài tập
+1. Tính trung bình điểm cả lớp
+2. Phân loại học sinh thành G/K/TB/Y
 `),
 
-  // ΓöÇΓöÇΓöÇ Cß║ñP 9: Tß╗åP TIN ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
-  L(41, 9, 1, 'B├ái 1: ─Éß╗ìc file v─ân bß║ún', 'open(), read(), readlines()', 'easy', `
+  // ─── CẤP 9: TỆP TIN ──────────────────────────────────────────────────────
+  L(41, 9, 1, 'Bài 1: Đọc file văn bản', 'open(), read(), readlines()', 'easy', `
 \`\`\`python
 with open("data.txt", "r", encoding="utf-8") as f:
     noi_dung = f.read()
 print(noi_dung)
 \`\`\`
 
-## ─Éß╗ìc theo d├▓ng
+## Đọc theo dòng
 \`\`\`python
 with open("data.txt", "r", encoding="utf-8") as f:
     for line in f:
         print(line.strip())
 \`\`\`
 
-## V├¼ sao d├╣ng with
-- Tß╗▒ ─æß╗Öng ─æ├│ng file
-- An to├án khi gß║╖p lß╗ùi
+## Vì sao dùng with
+- Tự động đóng file
+- An toàn khi gặp lỗi
 
-## B├ái tß║¡p
-1. ─Éß╗ìc file, ─æß║┐m sß╗æ d├▓ng
-2. ─Éß╗ìc file, ─æß║┐m sß╗æ tß╗½
+## Bài tập
+1. Đọc file, đếm số dòng
+2. Đọc file, đếm số từ
 `),
-  L(42, 9, 2, 'B├ái 2: Ghi file v─ân bß║ún', 'mode "w" v├á "a"', 'easy', `
+  L(42, 9, 2, 'Bài 2: Ghi file văn bản', 'mode "w" và "a"', 'easy', `
 \`\`\`python
 with open("output.txt", "w", encoding="utf-8") as f:
-    f.write("Xin ch├áo\\n")
-    f.write("H├┤m nay hß╗ìc Python\\n")
+    f.write("Xin chào\\n")
+    f.write("Hôm nay học Python\\n")
 \`\`\`
 
 ## Mode
-- \`"w"\`: ghi mß╗¢i (xo├í nß╗Öi dung c┼⌐)
-- \`"a"\`: ghi th├¬m
-- \`"r"\`: chß╗ë ─æß╗ìc
+- \`"w"\`: ghi mới (xoá nội dung cũ)
+- \`"a"\`: ghi thêm
+- \`"r"\`: chỉ đọc
 
-## B├ái tß║¡p
-1. ─Éß╗ìc N sß╗æ rß╗ôi ghi v├áo file output.txt
-2. Ghi log thß╗¥i gian khß╗ƒi ─æß╗Öng ch╞░╞íng tr├¼nh
+## Bài tập
+1. Đọc N số rồi ghi vào file output.txt
+2. Ghi log thời gian khởi động chương trình
 `),
-  L(43, 9, 3, 'B├ái 3: File CSV', 'Module csv', 'medium', `
+  L(43, 9, 3, 'Bài 3: File CSV', 'Module csv', 'medium', `
 \`\`\`python
 import csv
 
@@ -1541,7 +1316,7 @@ with open("hs.csv", "r", encoding="utf-8") as f:
 # Ghi
 with open("out.csv", "w", encoding="utf-8", newline="") as f:
     writer = csv.writer(f)
-    writer.writerow(["T├¬n", "Tuß╗òi", "─Éiß╗âm"])
+    writer.writerow(["Tên", "Tuổi", "Điểm"])
     writer.writerow(["An", 17, 8.5])
 \`\`\`
 
@@ -1549,28 +1324,28 @@ with open("out.csv", "w", encoding="utf-8", newline="") as f:
 \`\`\`python
 reader = csv.DictReader(f)
 for row in reader:
-    print(row["T├¬n"], row["─Éiß╗âm"])
+    print(row["Tên"], row["Điểm"])
 \`\`\`
 
-## B├ái tß║¡p
-1. ─Éß╗ìc CSV ─æiß╗âm, t├¡nh trung b├¼nh
-2. Ghi danh s├ích hß╗ìc sinh ra CSV
+## Bài tập
+1. Đọc CSV điểm, tính trung bình
+2. Ghi danh sách học sinh ra CSV
 `),
-  L(44, 9, 4, 'B├ái 4: Bß║»t lß╗ùi try/except', 'Xß╗¡ l├╜ ngoß║íi lß╗ç', 'medium', `
+  L(44, 9, 4, 'Bài 4: Bắt lỗi try/except', 'Xử lý ngoại lệ', 'medium', `
 \`\`\`python
 try:
     n = int(input())
     print(10 / n)
 except ValueError:
-    print("Phß║úi nhß║¡p sß╗æ")
+    print("Phải nhập số")
 except ZeroDivisionError:
-    print("Kh├┤ng chia ─æ╞░ß╗úc cho 0")
+    print("Không chia được cho 0")
 except Exception as e:
-    print(f"Lß╗ùi: {e}")
+    print(f"Lỗi: {e}")
 \`\`\`
 
 ## finally
-Khß╗æi lu├┤n chß║íy d├╣ c├│ lß╗ùi hay kh├┤ng.
+Khối luôn chạy dù có lỗi hay không.
 \`\`\`python
 try:
     f = open("data.txt")
@@ -1578,11 +1353,11 @@ finally:
     f.close()
 \`\`\`
 
-## B├ái tß║¡p
-1. ─Éß╗ìc sß╗æ nguy├¬n ─æß║┐n khi nhß║¡p ─æ├║ng
-2. ─Éß╗ìc file, in th├┤ng b├ío lß╗ùi nß║┐u file kh├┤ng tß╗ôn tß║íi
+## Bài tập
+1. Đọc số nguyên đến khi nhập đúng
+2. Đọc file, in thông báo lỗi nếu file không tồn tại
 `),
-  L(45, 9, 5, 'B├ái 5: Mini app sß╗ò li├¬n lß║íc', 'CRUD vß╗¢i file CSV', 'hard', `
+  L(45, 9, 5, 'Bài 5: Mini app sổ liên lạc', 'CRUD với file CSV', 'hard', `
 \`\`\`python
 import csv
 
@@ -1598,16 +1373,16 @@ def liet_ke():
             for ten, sdt in csv.reader(f):
                 print(ten, sdt)
     except FileNotFoundError:
-        print("Ch╞░a c├│ ai")
+        print("Chưa có ai")
 \`\`\`
 
-## B├ái tß║¡p
-1. Th├¬m chß╗⌐c n─âng t├¼m theo t├¬n
-2. Th├¬m chß╗⌐c n─âng xo├í theo sß╗æ ─æiß╗çn thoß║íi
+## Bài tập
+1. Thêm chức năng tìm theo tên
+2. Thêm chức năng xoá theo số điện thoại
 `),
 
-  // ΓöÇΓöÇΓöÇ Cß║ñP 10: THUß║¼T TO├üN ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
-  L(46, 10, 1, 'B├ái 1: T├¼m kiß║┐m tuyß║┐n t├¡nh', 'Linear search', 'easy', `
+  // ─── CẤP 10: THUẬT TOÁN ──────────────────────────────────────────────────
+  L(46, 10, 1, 'Bài 1: Tìm kiếm tuyến tính', 'Linear search', 'easy', `
 \`\`\`python
 def tim(arr, x):
     for i, v in enumerate(arr):
@@ -1616,15 +1391,15 @@ def tim(arr, x):
     return -1
 \`\`\`
 
-## ─Éß╗Ö phß╗⌐c tß║íp
-- Tß╗æt nhß║Ñt O(1) (phß║ºn tß╗¡ ─æß║ºu)
-- Tß╗ç nhß║Ñt O(n)
+## Độ phức tạp
+- Tốt nhất O(1) (phần tử đầu)
+- Tệ nhất O(n)
 
-## B├ái tß║¡p
-1. T├¼m vß╗ï tr├¡ ─æß║ºu ti├¬n cß╗ºa x trong list
-2. ─Éß║┐m sß╗æ lß║ºn x xuß║Ñt hiß╗çn
+## Bài tập
+1. Tìm vị trí đầu tiên của x trong list
+2. Đếm số lần x xuất hiện
 `),
-  L(47, 10, 2, 'B├ái 2: T├¼m kiß║┐m nhß╗ï ph├ón', 'Binary search tr├¬n d├úy ─æ├ú sß║»p', 'medium', `
+  L(47, 10, 2, 'Bài 2: Tìm kiếm nhị phân', 'Binary search trên dãy đã sắp', 'medium', `
 \`\`\`python
 def bsearch(arr, x):
     l, r = 0, len(arr) - 1
@@ -1639,17 +1414,17 @@ def bsearch(arr, x):
     return -1
 \`\`\`
 
-## Y├¬u cß║ºu
-Mß║úng phß║úi **─æ├ú sß║»p xß║┐p**.
+## Yêu cầu
+Mảng phải **đã sắp xếp**.
 
-## ─Éß╗Ö phß╗⌐c tß║íp
+## Độ phức tạp
 - O(log n)
 
-## B├ái tß║¡p
-1. C├ái binary search ─æß╗ç quy
-2. T├¼m phß║ºn tß╗¡ ─æß║ºu ti├¬n >= x
+## Bài tập
+1. Cài binary search đệ quy
+2. Tìm phần tử đầu tiên >= x
 `),
-  L(48, 10, 3, 'B├ái 3: Sß║»p xß║┐p nß╗òi bß╗ìt', 'Bubble sort', 'medium', `
+  L(48, 10, 3, 'Bài 3: Sắp xếp nổi bọt', 'Bubble sort', 'medium', `
 \`\`\`python
 def bubble(arr):
     n = len(arr)
@@ -1663,15 +1438,15 @@ def bubble(arr):
             break
 \`\`\`
 
-## ─Éß╗Ö phß╗⌐c tß║íp
-- O(n┬▓) trung b├¼nh
-- O(n) tß╗æt nhß║Ñt nß║┐u ─æ├ú sß║»p
+## Độ phức tạp
+- O(n²) trung bình
+- O(n) tốt nhất nếu đã sắp
 
-## B├ái tß║¡p
-1. C├ái selection sort
-2. C├ái insertion sort
+## Bài tập
+1. Cài selection sort
+2. Cài insertion sort
 `),
-  L(49, 10, 4, 'B├ái 4: B├ái to├ín quy hoß║ích ─æß╗Öng ─æ╞ín giß║ún', 'Memoization', 'hard', `
+  L(49, 10, 4, 'Bài 4: Bài toán quy hoạch động đơn giản', 'Memoization', 'hard', `
 \`\`\`python
 memo = {}
 
@@ -1684,7 +1459,7 @@ def fib(n):
     return memo[n]
 \`\`\`
 
-## Hoß║╖c bottom-up
+## Hoặc bottom-up
 \`\`\`python
 def fib(n):
     a, b = 0, 1
@@ -1693,33 +1468,33 @@ def fib(n):
     return a
 \`\`\`
 
-## B├ái tß║¡p
-1. ─Éß║┐m sß╗æ c├ích leo cß║ºu thang n bß║¡c, mß╗ùi b╞░ß╗¢c 1 hoß║╖c 2
-2. Tß╗òng lß╗¢n nhß║Ñt c├íc phß║ºn tß╗¡ kh├┤ng kß╗ü nhau
+## Bài tập
+1. Đếm số cách leo cầu thang n bậc, mỗi bước 1 hoặc 2
+2. Tổng lớn nhất các phần tử không kề nhau
 `),
-  L(50, 10, 5, 'B├ái 5: Tß╗òng kß║┐t v├á project nhß╗Å', '├üp dß╗Ñng tß╗òng hß╗úp', 'hard', `
-## Y├¬u cß║ºu
-X├óy dß╗▒ng ch╞░╞íng tr├¼nh **quß║ún l├╜ ─æiß╗âm thi tß╗æt nghiß╗çp** cho 1 lß╗¢p:
-1. ─Éß╗ìc danh s├ích hß╗ìc sinh tß╗½ file CSV (t├¬n, ─æiß╗âm 6 m├┤n)
-2. T├¡nh tß╗òng, trung b├¼nh, ph├ón loß║íi G/K/TB/Y
-3. Sß║»p xß║┐p theo ─æiß╗âm trung b├¼nh giß║úm dß║ºn
-4. Cho ph├⌐p tra cß╗⌐u ─æiß╗âm theo t├¬n
-5. Xuß║Ñt b├ío c├ío ra file mß╗¢i
+  L(50, 10, 5, 'Bài 5: Tổng kết và project nhỏ', 'Áp dụng tổng hợp', 'hard', `
+## Yêu cầu
+Xây dựng chương trình **quản lý điểm thi tốt nghiệp** cho 1 lớp:
+1. Đọc danh sách học sinh từ file CSV (tên, điểm 6 môn)
+2. Tính tổng, trung bình, phân loại G/K/TB/Y
+3. Sắp xếp theo điểm trung bình giảm dần
+4. Cho phép tra cứu điểm theo tên
+5. Xuất báo cáo ra file mới
 
-## Gß╗úi ├╜ ph├ón chia
-- \`doc_du_lieu(file)\` ΓåÆ list dict
-- \`tinh_tb(hs)\` ΓåÆ float
-- \`xep_loai(tb)\` ΓåÆ str
+## Gợi ý phân chia
+- \`doc_du_lieu(file)\` → list dict
+- \`tinh_tb(hs)\` → float
+- \`xep_loai(tb)\` → str
 - \`xuat_bao_cao(hs_list, file_out)\`
 
-## Tß╗▒ ─æ├ính gi├í
-- Γ£à Code chß║íy kh├┤ng lß╗ùi
-- Γ£à T├ích h├ám r├╡ r├áng
-- Γ£à C├│ comment giß║úi th├¡ch
-- Γ£à D├╣ng try/except cho file
-- Γ£à Test vß╗¢i ├¡t nhß║Ñt 5 hß╗ìc sinh
+## Tự đánh giá
+- ✅ Code chạy không lỗi
+- ✅ Tách hàm rõ ràng
+- ✅ Có comment giải thích
+- ✅ Dùng try/except cho file
+- ✅ Test với ít nhất 5 học sinh
 
-Ch├║c bß║ín ho├án th├ánh tß╗æt v├á sß║╡n s├áng cho kß╗│ thi tß╗æt nghiß╗çp! ≡ƒÄô
+Chúc bạn hoàn thành tốt và sẵn sàng cho kỳ thi tốt nghiệp! 🎓
 `),
 ];
 
