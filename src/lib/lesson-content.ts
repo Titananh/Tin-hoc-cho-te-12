@@ -217,95 +217,233 @@ print(ten)  # An
 3. Thử gán \`x = 5\` rồi \`x = "năm"\` — Python có báo lỗi không? Tại sao?
 `),
   L(3, 1, 3, 'Bài 3: Nhập / xuất dữ liệu', 'input() và print() có format', 'easy', `
-## Đọc dữ liệu từ bàn phím
-Hàm \`input()\` luôn trả về **chuỗi**. Muốn dùng làm số thì cần ép kiểu.
+## 🎯 Mục tiêu bài học
+- Sử dụng \`input()\` để đọc dữ liệu từ bàn phím
+- Hiểu cách ép kiểu (type casting)
+- Dùng f-string để in dữ liệu đẹp
+
+---
+
+## 📥 Đọc dữ liệu với \`input()\`
+
+\`input()\` luôn trả về **chuỗi (str)**. Muốn dùng làm số → phải ép kiểu.
+
 \`\`\`python
-ten = input("Nhập tên: ")
-tuoi = int(input("Nhập tuổi: "))
+ten = input("Nhập tên: ")           # → str
+tuoi = int(input("Nhập tuổi: "))    # → int
+diem = float(input("Nhập điểm: "))  # → float
+\`\`\`
+
+### Luồng dữ liệu:
+\`\`\`
+Bàn phím → input() → "17" (str) → int() → 17 (int)
+\`\`\`
+
+> ⚠️ **Lỗi phổ biến:** Nếu user nhập "abc" mà bạn dùng \`int()\`, Python sẽ báo \`ValueError\`!
+
+---
+
+## 📤 In dữ liệu với \`print()\`
+
+### Cách 1: In nhiều giá trị
+\`\`\`python
+print("Xin chào", ten)              # Tự thêm dấu cách
+print("a", "b", "c", sep="-")       # a-b-c
+print("không xuống dòng", end=" ")   # Giữ nguyên dòng
+\`\`\`
+
+### Cách 2: f-string (⭐ khuyên dùng)
+\`\`\`python
+ten = "An"
+tuoi = 17
 print(f"Xin chào {ten}, {tuoi} tuổi")
+# → Xin chào An, 17 tuổi
 \`\`\`
 
-## In dữ liệu
-\`\`\`python
-print("Xin chào", ten)              # ngăn cách dấu cách
-print("a", "b", sep="-")            # a-b
-print("không xuống dòng", end=" ")  # giữ nguyên dòng
-print(f"{ten} có {tuoi} tuổi")      # f-string
-\`\`\`
-
-## f-string định dạng số
+### Cách 3: Định dạng số
 \`\`\`python
 pi = 3.14159
-print(f"{pi:.2f}")  # 3.14
+print(f"{pi:.2f}")      # 3.14 (2 chữ số thập phân)
+print(f"{1000000:,}")   # 1,000,000 (phân cách hàng nghìn)
 \`\`\`
 
-## Bài tập tự luyện
-1. Viết chương trình hỏi tên người dùng và in ra "Xin chào, <tên>"
-2. Đọc 2 số nguyên rồi in tổng của chúng
+---
+
+## 🔄 Ép kiểu (Type Casting)
+
+\`\`\`
+int("17")    → 17        str → int
+float("3.5") → 3.5       str → float
+str(100)     → "100"     int → str
+int(3.9)     → 3         float → int (cắt phần thập phân)
+\`\`\`
+
+> 🧪 **Thử ngay:** Gõ \`print(int(3.9))\` — kết quả là 3 chứ không phải 4!
+
+---
+
+## ⚠️ Lỗi thường gặp
+
+| Code | Lỗi | Cách sửa |
+|------|------|----------|
+| \`int("abc")\` | ValueError | Kiểm tra input trước khi ép kiểu |
+| \`print(f"{ten")\` | SyntaxError | Thiếu \`}\` đóng |
+| \`tuoi = input()\` rồi \`tuoi + 1\` | TypeError | Cần \`int(input())\` |
+
+---
+
+## ✏️ Bài tập tự luyện
+1. Hỏi tên người dùng, in ra \`"Xin chào, <tên>!"\`
+2. Đọc 2 số nguyên a, b → in tổng, hiệu, tích
+3. Đọc bán kính hình tròn → in diện tích (làm tròn 2 chữ số)
 `),
   L(4, 1, 4, 'Bài 4: Toán tử số học và gán', 'Phép toán + - * / // % ** và phép gán', 'easy', `
-## Toán tử số học
-| Toán tử | Tác dụng | Ví dụ | Kết quả |
-|---|---|---|---|
-| \`+\` | cộng | \`5 + 2\` | 7 |
-| \`-\` | trừ | \`5 - 2\` | 3 |
-| \`*\` | nhân | \`5 * 2\` | 10 |
-| \`/\` | chia | \`5 / 2\` | 2.5 |
-| \`//\` | chia lấy nguyên | \`5 // 2\` | 2 |
-| \`%\` | chia lấy dư | \`5 % 2\` | 1 |
-| \`**\` | luỹ thừa | \`5 ** 2\` | 25 |
+## 🎯 Mục tiêu bài học
+- Nắm vững 7 toán tử số học trong Python
+- Hiểu sự khác biệt giữa \`/\` và \`//\`
+- Sử dụng toán tử gán rút gọn
 
-## Toán tử gán rút gọn
-\`\`\`python
-x = 10
-x += 5   # x = 15
-x -= 3   # x = 12
-x *= 2   # x = 24
-x //= 5  # x = 4
+---
+
+## ➕ 7 Toán tử số học
+
+| Toán tử | Tên | Ví dụ | Kết quả | Ghi chú |
+|---------|-----|-------|---------|---------|
+| \`+\` | Cộng | \`5 + 2\` | \`7\` | |
+| \`-\` | Trừ | \`5 - 2\` | \`3\` | |
+| \`*\` | Nhân | \`5 * 2\` | \`10\` | |
+| \`/\` | Chia | \`5 / 2\` | \`2.5\` | ⚠️ Luôn trả float |
+| \`//\` | Chia lấy nguyên | \`5 // 2\` | \`2\` | Bỏ phần thập phân |
+| \`%\` | Chia lấy dư | \`5 % 2\` | \`1\` | Modulo |
+| \`**\` | Lũy thừa | \`5 ** 2\` | \`25\` | 5² = 25 |
+
+### Minh họa \`/\` vs \`//\` vs \`%\`:
+\`\`\`
+17 / 5  = 3.4    (chia thường → float)
+17 // 5 = 3      (phần nguyên)
+17 % 5  = 2      (phần dư)
+
+Kiểm tra: 5 × 3 + 2 = 17 ✓
 \`\`\`
 
-## Lưu ý ưu tiên phép toán
-Tương tự toán học: \`** > * / // % > + -\`. Dùng dấu ngoặc khi cần.
+> 💡 **Mẹo:** \`n % 2 == 0\` → n chẵn. \`n % 2 == 1\` → n lẻ.
 
-## Bài tập tự luyện
-1. Tính \`(3 + 4) * 5\`, sau đó so sánh với \`3 + 4 * 5\`
-2. Cho 2 số a, b. In thương và phần dư khi chia a cho b
+---
+
+## 📝 Toán tử gán rút gọn
+
+Thay vì viết \`x = x + 5\`, Python cho phép viết ngắn:
+
+\`\`\`python
+x = 10
+x += 5    # x = x + 5  → 15
+x -= 3    # x = x - 3  → 12
+x *= 2    # x = x * 2  → 24
+x //= 5   # x = x // 5 → 4
+x %= 3    # x = x % 3  → 1
+\`\`\`
+
+---
+
+## 📐 Thứ tự ưu tiên (giống Toán)
+
+\`\`\`
+Cao nhất:  **  (lũy thừa)
+           * / // %
+Thấp nhất: + -
+
+Ví dụ: 3 + 4 * 5 = 3 + 20 = 23 (nhân trước)
+       (3 + 4) * 5 = 7 * 5 = 35 (ngoặc trước)
+\`\`\`
+
+> 🧪 **Thử ngay:** So sánh \`2 ** 3 ** 2\` với \`(2 ** 3) ** 2\` — kết quả khác nhau!
+
+---
+
+## ⚠️ Lỗi thường gặp
+
+| Code | Vấn đề | Giải thích |
+|------|--------|-----------|
+| \`5 / 0\` | ZeroDivisionError | Không thể chia cho 0 |
+| \`"3" + 2\` | TypeError | Không cộng str với int |
+| \`10 / 3\` = 3.33... | Không phải 3 | Dùng \`//\` nếu muốn 3 |
+
+---
+
+## ✏️ Bài tập tự luyện
+1. Tính \`(3 + 4) * 5\` và \`3 + 4 * 5\` — giải thích sự khác biệt
+2. Cho a = 17, b = 5. In thương nguyên và phần dư
+3. Tính diện tích hình tròn bán kính r (nhập từ bàn phím), dùng \`pi = 3.14159\`
 `),
   L(5, 1, 5, 'Bài 5: Chuỗi ký tự cơ bản', 'Khai báo, nối, slicing, format', 'easy', `
-## Khai báo chuỗi
+## 🎯 Mục tiêu bài học
+- Khai báo và thao tác với chuỗi (string)
+- Hiểu indexing và slicing
+- Sử dụng các phương thức chuỗi phổ biến
+
+---
+
+## 📝 Khai báo chuỗi
+
 \`\`\`python
-s1 = "Hà Nội"
-s2 = 'Việt Nam'
-s3 = """Chuỗi
+s1 = "Hà Nội"          # Dấu ngoặc kép
+s2 = 'Việt Nam'         # Dấu ngoặc đơn
+s3 = """Chuỗi           # Ba dấu ngoặc (nhiều dòng)
 nhiều dòng"""
 \`\`\`
 
-## Nối và nhân chuỗi
+---
+
+## 🔗 Nối và nhân chuỗi
+
 \`\`\`python
-print("Xin " + "chào")     # Xin chào
-print("ha" * 3)             # hahaha
+ho = "Nguyễn"
+ten = "An"
+print(ho + " " + ten)   # Nguyễn An
+print("ha" * 3)          # hahaha
+print("-" * 20)          # --------------------
 \`\`\`
 
-## Slicing s[start:end:step]
+---
+
+## 🔢 Indexing và Slicing
+
+\`\`\`
+Chuỗi:  P  y  t  h  o  n
+Index:   0  1  2  3  4  5
+Âm:     -6 -5 -4 -3 -2 -1
+\`\`\`
+
 \`\`\`python
 s = "Python"
-print(s[0])    # P
-print(s[1:4])  # yth
-print(s[::-1]) # nohtyP (đảo ngược)
+s[0]      # "P"
+s[-1]     # "n"
+s[1:4]    # "yth"
+s[::-1]   # "nohtyP" (đảo ngược)
 \`\`\`
 
-## Một số phương thức hữu ích
-\`\`\`python
-"Hello".lower()      # 'hello'
-"hello".upper()      # 'HELLO'
-"  hi  ".strip()     # 'hi'
-"a,b,c".split(",")   # ['a', 'b', 'c']
-"-".join(["a","b"])  # 'a-b'
-\`\`\`
+---
 
-## Bài tập tự luyện
-1. Đọc một chuỗi và in chuỗi đảo ngược
+## 🛠️ Phương thức chuỗi hay dùng
+
+| Phương thức | Ví dụ | Kết quả |
+|-------------|-------|---------|
+| \`.lower()\` | \`"HI".lower()\` | \`"hi"\` |
+| \`.upper()\` | \`"hi".upper()\` | \`"HI"\` |
+| \`.strip()\` | \`"  hi  ".strip()\` | \`"hi"\` |
+| \`.split(",")\` | \`"a,b,c".split(",")\` | \`['a','b','c']\` |
+| \`.replace()\` | \`"hi".replace("h","H")\` | \`"Hi"\` |
+| \`.count()\` | \`"hello".count("l")\` | \`2\` |
+| \`len()\` | \`len("Python")\` | \`6\` |
+
+> 🧪 **Thử ngay:** Gõ \`"Hello World"[6:]\` — kết quả là gì?
+
+---
+
+## ✏️ Bài tập tự luyện
+1. Đọc một chuỗi → in chuỗi đảo ngược
 2. Đếm số ký tự "a" trong chuỗi đầu vào
+3. Đọc họ tên → in ra chữ cái đầu viết hoa, còn lại viết thường
 `),
 
   // ─── CẤP 2: BIỂU THỨC VÀ TOÁN TỬ ─────────────────────────────────────────
